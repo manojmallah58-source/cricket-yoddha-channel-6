@@ -1,47 +1,4 @@
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>Prime By Cricket Yoddha</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
-<body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://assets.tntsports.io/web/img/og/tntsports.jpg"></video>  
-  </div>  
-  
-  <script>  
+<script>  
     document.addEventListener('DOMContentLoaded', async () => {  
       shaka.polyfill.installAll();  
   
@@ -74,10 +31,17 @@
         }  
       });  
   
-      // ✅ नया, चलने वाला HLS स्ट्रीम URL
-      let streamUrl = "https://sonydaimenew.akamaized.net/hls/live/2018457/DAI09-criclive/std_mdh-700300010.m3u8?hdnea=st=1765687763~exp=1765688063~acl=*~id=70be318c-2e93-4c88-bbe1-8ea340a2b285~hmac=4e23cd1570c98a2f4941a29dec1017b8efb6b5ddbe49d227405d8fb1a8b82b59&originpath=/linear/hls/pb/event/D07-rC4TTgWxsH6LZlTxgg/stream/b8efc5bb-470e-46d4-a24a-6605c5516d52:TPE/master.m3u8";
+      // ✅ नया DRM Key + MPD URL  
+      let drmConfig = {  
+        clearKeys: {  
+          "9889ef320e9098aff075ced4452c34d9": "72601d49b57352c5a614777dbff85740"  
+        }  
+      };  
+  
+      let streamUrl = "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/o25bbufx7o/out/v1/7779ab5da6594e0ab9feaecf0488bba2/cenc.mpd";  
   
       player.configure({  
+        drm: drmConfig,  
         streaming: {  
           lowLatencyMode: true,  
           bufferingGoal: 15,  
@@ -113,7 +77,6 @@
       }  
     });  
   </script>  
-</body>  
-</html>
+
 
 
