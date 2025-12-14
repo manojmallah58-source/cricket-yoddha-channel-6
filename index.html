@@ -1,4 +1,4 @@
-<!DOCTYPEDOCTYPE html>  
+<!DOCTYPE html>  
 <html>  
 <head>  
   <meta charset="UTF-8">  
@@ -39,7 +39,7 @@
 </head>  
 <body>  
   <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://i.ibb.co/S4nRbgCN/IMG-20251213-135745.jpg"></video>  
+    <video autoplay playsinline preload="metadata" poster="https://assets.tntsports.io/web/img/og/tntsports.jpg"></video>  
   </div>  
   
   <script>  
@@ -75,15 +75,15 @@
         }  
       });  
   
-      // ✅ UPDATED DRM Key (Key ID:Value) as per your link
+      // ✅ UPDATED DRM Key (Key ID:Value)
       let drmConfig = {  
         clearKeys: {  
-          "fe7718fbb3fb4ba78c07cc0f578744e6": "624e24b1843b459fab0a949609416f0d"  
+          "7cffbee988429d35e0feef8eb95625dc": "ab6d927ddb9c6dbdf4479b422955136a"  
         }  
       };  
   
-      // ✅ UPDATED MPD URL (Cleaned from your provided link)
-      let streamUrl = "https://livetv-push.hotstar.com/dash/live/2002466/sshindiwv/master.mpd";  
+      // ✅ UPDATED MPD URL
+      let streamUrl = "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/fp4zddggao/out/v1/c7fcb1aa23e54c1586347d5b8a0e6b3f/cenc.mpd";  
   
       player.configure({  
         drm: drmConfig,  
@@ -109,22 +109,6 @@
           }  
         }  
       });  
-      
-      // ✅ ADDED Request Filter to include necessary Headers (Cookie, User-agent, etc.)
-      // This is crucial for streams that require specific headers to work.
-      player.getNetworkingEngine().registerRequestFilter(
-        (type, request) => {
-            // Apply headers to both MANIFEST and SEGMENT requests
-            if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-                type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
-                
-                request.headers['Cookie'] = 'hdntl=exp=1765799781~acl=*sshindi*~id=523edb70e293fdbeb92a6647304d35a1~data=hdntl~hmac=f1195920e981d8b1c1de8c677bd12ed10ab3b8a9b76fa315d69eac9dbe6eb30f';
-                request.headers['User-agent'] = 'Hotstar;in.startv.hotstar/25.02.24.8.11169 (Android/15)';
-                request.headers['Referer'] = 'https://www.hotstar.com/';
-                request.headers['Origin'] = 'https://www.hotstar.com';
-            }
-        }
-      );
   
       player.addEventListener('error', (event) => {  
         console.error('Shaka Player Error:', event.detail);  
@@ -140,6 +124,7 @@
   </script>  
 </body>  
 </html>
+
 
 
 
