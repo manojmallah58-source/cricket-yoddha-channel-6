@@ -74,11 +74,9 @@
         }  
       });  
   
-      // ✅ नया HLS स्ट्रीम URL
-      let streamUrl = "https://sonymtmnew.akamaized.net/hls/live/2037140/DAI20-criclive/std_lrh-800300010.m3u8?hdnea=exp=1765650603~acl=/*~id=c47101be66359c61803aedfdc2401bb9-1765607400133~hmac=b8bd79ea36171391bf9b497c1328075248a99429890d665336783c58e47b37c3";
+      // ✅ नया, चलने वाला HLS स्ट्रीम URL
+      let streamUrl = "https://sonydaimenew.akamaized.net/hls/live/2018457/DAI09-criclive/std_mdh-700300010.m3u8?hdnea=st=1765687763~exp=1765688063~acl=*~id=70be318c-2e93-4c88-bbe1-8ea340a2b285~hmac=4e23cd1570c98a2f4941a29dec1017b8efb6b5ddbe49d227405d8fb1a8b82b59&originpath=/linear/hls/pb/event/D07-rC4TTgWxsH6LZlTxgg/stream/b8efc5bb-470e-46d4-a24a-6605c5516d52:TPE/master.m3u8";
   
-      // DRM कॉन्फ़िगरेशन हटा दिया गया है क्योंकि यह HLS स्ट्रीम एन्क्रिप्टेड (ClearKey) नहीं लगती है।
-      
       player.configure({  
         streaming: {  
           lowLatencyMode: true,  
@@ -93,7 +91,6 @@
           },  
           segmentRequestTimeout: 8000,  
           segmentPrefetchLimit: 2,  
-          // HLS स्ट्रीम के लिए Safari पर native HLS का उपयोग करने की अनुमति दी गई है
           useNativeHlsOnSafari: true  
         },  
         manifest: {  
@@ -118,4 +115,5 @@
   </script>  
 </body>  
 </html>
+
 
