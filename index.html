@@ -1,295 +1,345 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-<title>CRICKCAST</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kohlity XE - Live Cricket Streaming</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
 
-<style>
+        .header {
+            background: #000;
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid #222;
+        }
 
-/* GENERAL */
-html, body {
-  margin:0;
-  padding:0;
-  background:#05070a;
-  font-family:'Poppins',sans-serif;
-  color:#e0e0e0;
-  overflow-x:hidden;
-}
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
 
-/* HEADER */
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  height:70px;
-  background:rgba(5,10,15,0.85);
-  backdrop-filter:blur(10px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-bottom:1px solid rgba(0,255,170,0.25);
-  z-index:9999;
-}
+        .telegram-icon {
+            width: 40px;
+            height: 40px;
+            background: #0088cc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
 
-.logo-wrapper{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
 
-.logo-wrapper svg{
-  width:34px;
-  height:34px;
-  fill:none;
-  stroke:#00ffbf;
-  stroke-width:3;
-  filter:drop-shadow(0 0 10px rgba(0,255,170,0.7));
-}
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+        }
 
-.logo-text{
-  font-size:22px;
-  font-weight:700;
-  color:#00ffbf;
-  text-shadow:0 0 12px rgba(0,255,170,0.7);
-}
+        #videoPlayer {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+            display: block;
+        }
 
-/* POPUP */
-.popup-overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,.7);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10002;
-}
+        .content-section {
+            padding: 20px;
+            background: #000;
+        }
 
-.popup-box{
-  width:320px;
-  background:rgba(25,25,35,.8);
-  border:1px solid rgba(0,255,170,0.35);
-  border-radius:18px;
-  backdrop-filter:blur(12px);
-  padding:1.8rem;
-  text-align:center;
-  box-shadow:0 0 25px rgba(0,255,170,0.3);
-  position:relative;
-}
+        .follow-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
 
-.close-btn{
-  position:absolute;
-  top:10px;
-  right:15px;
-  background:none;
-  border:none;
-  color:#00ffbf;
-  font-size:22px;
-  cursor:pointer;
-}
+        .megaphone {
+            font-size: 1.5em;
+        }
 
-.popup-buttons{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
+        .button {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
 
-.popup-btn{
-  border-radius:10px;
-  padding:12px 0;
-  font-weight:600;
-  cursor:pointer;
-  border:none;
-  transition:.3s;
-}
+        .btn-telegram {
+            background: #e8e8e8;
+            color: #000;
+        }
 
-.join-btn{
-  background:linear-gradient(135deg,#00ffbf,#008cff);
-  color:#fff;
-  box-shadow:0 0 14px rgba(0,255,200,0.5);
-}
+        .btn-telegram:active {
+            background: #d0d0d0;
+        }
 
-.join-btn:hover{
-  background:linear-gradient(135deg,#00ffe0,#00a6ff);
-  box-shadow:0 0 22px rgba(0,255,200,0.8);
-}
+        .important-label {
+            color: #ff0000;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
 
-.already-btn{
-  background:rgba(255,255,255,0.12);
-  color:#fff;
-}
+        .btn-chrome {
+            background: #ff0000;
+            color: #fff;
+            font-weight: 600;
+        }
 
-.already-btn:hover{
-  background:rgba(255,255,255,0.22);
-}
+        .btn-chrome:active {
+            background: #cc0000;
+        }
 
-/* VIDEO */
-.video-container{
-  width:100%;
-  height:50vh;
-  background:#000;
-  margin-top:70px;
-  position:relative;
-}
+        .btn-share {
+            background: #e8e8e8;
+            color: #000;
+        }
 
-.video-container iframe{
-  width:100%;
-  height:100%;
-  border:none;
-  object-fit:cover;
-}
+        .btn-share:active {
+            background: #d0d0d0;
+        }
 
-/* SECTIONS */
-.section-box{
-  width:92%;
-  margin:18px auto;
-  padding:18px;
-  border-radius:14px;
-  text-align:center;
-  background:rgba(0,255,170,0.07);
-  border:1px solid rgba(0,255,170,0.25);
-  backdrop-filter:blur(10px);
-}
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
 
-.section-title{
-  color:#00ffbf;
-  font-size:18px;
-  margin-bottom:10px;
-}
+        .popup-overlay.active {
+            display: flex;
+        }
 
-.action-btn{
-  width:100%;
-  padding:14px 0;
-  border-radius:10px;
-  border:none;
-  background:linear-gradient(135deg,#00ffbf,#0078ff);
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
+        .popup-box {
+            background: #3c4043;
+            border-radius: 12px;
+            padding: 0;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
 
-.action-btn:hover{
-  transform:translateY(-2px);
-}
+        .popup-content {
+            padding: 24px 24px 20px;
+        }
 
-/* FLOATING TELEGRAM BUTTON */
-.telegram-float{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#00ffbf,#0078ff);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:28px;
-  text-decoration:none;
-  box-shadow:0 0 18px rgba(0,255,200,0.6);
-  animation:floatPulse 1.6s infinite ease-in-out;
-  z-index:99999;
-}
+        .popup-url {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            word-break: break-all;
+            line-height: 1.4;
+        }
 
-@keyframes floatPulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.15);}
-  100%{transform:scale(1);}
-}
+        .popup-message {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            line-height: 1.5;
+        }
 
-</style>
+        .popup-buttons {
+            display: flex;
+            justify-content: flex-end;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        .popup-btn {
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: #8ab4f8;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+
+        .popup-btn:hover {
+            background: rgba(138, 180, 248, 0.1);
+        }
+
+        .popup-btn:active {
+            background: rgba(138, 180, 248, 0.2);
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!-- VISITOR POPUP -->
-<div class="popup-overlay" id="visitorPopup" style="display:none;">
-  <div class="popup-box">
-    <button class="close-btn" onclick="closeVisitorPopup()">×</button>
-    <div class="popup-header">Total Visitors</div>
-    <img src="https://visit-counter.vercel.app/counter.png?page=crickcast.live&s=40&c=00ff00&bg=00000000"/>
-  </div>
-</div>
-
-<!-- JOIN TELEGRAM POPUP -->
-<div class="popup-overlay" id="popup">
-  <div class="popup-box">
-    <button class="close-btn" onclick="closePopup()">×</button>
-    <div class="popup-header">Support Us🤝</div>
-    <div class="popup-subtitle">Join our Channel for live matches and instant updates..</div>
-    <div class="popup-buttons">
-      <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" class="popup-btn join-btn">Join Now</a>
-      <button class="popup-btn already-btn" onclick="closePopup(); startStream();">Already Joined</button>
+    <!-- Popup Alert -->
+    <div id="popup" class="popup-overlay">
+        <div class="popup-box">
+            <div class="popup-content">
+                <div class="popup-url">https://kohlity-willow.pages.dev/ says</div>
+                <div class="popup-message">Join Our Telegram Channel @kohlity_xe</div>
+            </div>
+            <div class="popup-buttons">
+                <button class="popup-btn" onclick="closePopup()">Cancel</button>
+                <button class="popup-btn" onclick="acceptPopup()">OK</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- HEADER -->
-<header>
-  <div class="logo-wrapper">
-    <svg viewBox="0 0 64 64">
-      <path d="M20 14 L24 20 L32 14 L40 20 L44 14 L44 24 H20 Z"/>
-      <path d="M32 8 L10 18 V32 C10 48 21 58 32 60 C43 58 54 48 54 32 V18 Z"/>
-    </svg>
-    <span class="logo-text">CRICKCAST</span>
-  </div>
-</header>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <div class="telegram-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.67-.52.36-.99.53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.48 1.02-.73 3.99-1.73 6.65-2.87 7.98-3.42 3.8-1.58 4.59-1.85 5.1-1.86.11 0 .37.03.54.17.14.11.18.26.2.37.01.06.03.24.01.38z"/>
+                </svg>
+            </div>
+            <div>@kohlity_xe</div>
+        </div>
+    </div>
 
-<!-- VIDEO (✅ FIXED PLAYBACK) -->
-<div class="video-container">
-  <iframe
-    src="https://raw.githubusercontent.com/StmpupCricket/Star-Sports-Hindi-json/refs/heads/main/data.json" 
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Video Player -->
+        <div class="video-wrapper">
+            <iframe id="videoPlayer"
+                    src="https://cricketstan.github.io/Willow-Sports/"
+                    allowfullscreen
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation">
+            </iframe>
+        </div>
 
-    frameborder="0"
-    allowfullscreen
-    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups"
-  ></iframe>
-</div>
+        <!-- Content Section -->
+        <div class="content-section">
+            <div class="follow-header">
+                <span class="megaphone">📣</span>
+                <span>Follow us for Updates!</span>
+            </div>
 
-<!-- FOLLOW SECTION -->
-<div class="section-box">
-  <div class="section-title">🔔 Follow Us for Updates</div>
-  <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank">
-    <button class="action-btn">Join Telegram Channel</button>
-  </a>
-</div>
+            <button class="button btn-telegram" onclick="openTelegram()">
+                Click Here To Join Telegram For More Links
+            </button>
 
-<!-- SHARE SECTION -->
-<div class="section-box">
-  <div class="section-title">🔗 Share This Page</div>
-  <button class="action-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('✅ Link Copied! Share Now');">
-    Copy & Share This Page
-  </button>
-</div>
+            <div class="important-label">! IMPORTANT</div>
 
-<!-- FLOATING TELEGRAM BUTTON -->
-<a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" class="telegram-float">📣</a>
+            <button class="button btn-chrome" onclick="copyLink()">
+                Copy Link & Use in Chrome Browser Only
+            </button>
 
-<script>
-function closePopup(){
-  document.getElementById('popup').style.display='none';
-}
+            <button class="button btn-share" onclick="shareLink()">
+                Click Here To Share This Page Link ❤️
+            </button>
+        </div>
+    </div>
 
-function startStream(){
-  document.querySelector('.video-container iframe').src = document.querySelector('.video-container iframe').src;
-}
+    <script>
+        const popup = document.getElementById('popup');
+        const pageUrl = 'https://kohlity-willow.pages.dev/';
+        const telegramUrl = 'https://t.me/+a6XTlfKkUXJlMzZl';
 
-function closeVisitorPopup(){
-  document.getElementById('visitorPopup').style.display='none';
-}
-</script>
+        // Show popup on page load
+        window.onload = function() {
+            popup.classList.add('active');
+        };
 
+        function closePopup() {
+            popup.classList.remove('active');
+        }
+
+        function acceptPopup() {
+            window.open(telegramUrl, '_blank');
+            closePopup();
+        }
+
+        function openTelegram() {
+            window.open(telegramUrl, '_blank');
+        }
+
+        function copyLink() {
+            // Create temporary input to copy text
+            const tempInput = document.createElement('input');
+            tempInput.value = pageUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                alert('Link copied! Open in Chrome browser.');
+            } catch (err) {
+                // Fallback for browsers that don't support execCommand
+                navigator.clipboard.writeText(pageUrl).then(() => {
+                    alert('Link copied! Open in Chrome browser.');
+                }).catch(() => {
+                    alert('Please copy this link manually: ' + pageUrl);
+                });
+            }
+            
+            document.body.removeChild(tempInput);
+        }
+
+        function shareLink() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Kohlity XE - Live Cricket Streaming',
+                    text: 'Watch live cricket streaming!',
+                    url: pageUrl
+                }).catch(() => {
+                    // If share fails, copy link instead
+                    copyLink();
+                });
+            } else {
+                // Fallback to copy link
+                copyLink();
+            }
+        }
+    </script>
 </body>
 </html>
-
 
 
