@@ -1,128 +1,294 @@
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>Prime By Cricket Yoddha</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    /* Shaka Spinner Hiding */
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
-<body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay playsinline preload="metadata" poster="https://assets.tntsports.io/web/img/og/tntsports.jpg"></video>  
-  </div>  
-  
-  <script>  
-    document.addEventListener('DOMContentLoaded', async () => {  
-      shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
-        console.error('Browser not supported');  
-        return;  
-      }  
-  
-      const video = document.querySelector('video');  
-      const player = new shaka.Player();  
-      await player.attach(video);  
-  
-      const container = document.querySelector('.shaka-video-container');  
-      const ui = new shaka.ui.Overlay(player, container, video);  
-  
-      ui.configure({  
-        controlPanelElements: [  
-          'play_pause', 'time_and_duration', 'mute', 'volume',  
-          'spacer', 'language', 'captions', 'picture_in_picture',  
-          'quality', 'fullscreen'  
-        ],  
-        volumeBarColors: {  
-          base: 'rgba(255, 192, 203, 0.3)',  
-          level: 'rgb(255, 105, 180)'
-        },  
-        seekBarColors: {  
-          base: 'rgba(255, 255, 0, 0.3)',  
-          buffered: 'rgba(255, 255, 0, 0.6)',  
-          played: 'rgb(255, 255, 0)'  
-        }  
-      });  
-  
-      // ✅ UPDATED DRM Key (Key ID:Value)
-      let drmConfig = {  
-        clearKeys: {  
-          "588300f182b49a5855aeec9314dd0c2d": "7340ddbe1b7951b879e0742cb9e7149a"  
-        }  
-      };  
-  
-      // ✅ UPDATED MPD URL (Query parameters removed)
-      let streamUrl = "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/oriaqn2oob/out/v1/4ffd05558873491a95e06e846b0bec29/cenc.mpd";  
-  
-      player.configure({  
-        drm: drmConfig,  
-        streaming: {  
-          lowLatencyMode: true,  
-          bufferingGoal: 15,  
-          rebufferingGoal: 2,  
-          bufferBehind: 15,  
-          retryParameters: {  
-            timeout: 10000,  
-            maxAttempts: 5,  
-            baseDelay: 300,  
-            backoffFactor: 1.2  
-          },  
-          segmentRequestTimeout: 8000,  
-          segmentPrefetchLimit: 2,  
-          useNativeHlsOnSafari: true  
-        },  
-        manifest: {  
-          retryParameters: {  
-            timeout: 8000,  
-            maxAttempts: 3  
-          }  
-        }  
-      });  
-  
-      player.addEventListener('error', (event) => {  
-        console.error('Shaka Player Error:', event.detail);  
-      });  
-  
-      try {  
-        await player.load(streamUrl);  
-        console.log("Stream loaded successfully");  
-      } catch (error) {  
-        console.error('Load error:', error);  
-      }  
-    });  
-  </script>  
-</body>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>CRICKCAST</title>
+
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* GENERAL */
+html, body {
+  margin:0;
+  padding:0;
+  background:#05070a;
+  font-family:'Poppins',sans-serif;
+  color:#e0e0e0;
+  overflow-x:hidden;
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:70px;
+  background:rgba(5,10,15,0.85);
+  backdrop-filter:blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:1px solid rgba(0,255,170,0.25);
+  z-index:9999;
+}
+
+.logo-wrapper{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo-wrapper svg{
+  width:34px;
+  height:34px;
+  fill:none;
+  stroke:#00ffbf;
+  stroke-width:3;
+  filter:drop-shadow(0 0 10px rgba(0,255,170,0.7));
+}
+
+.logo-text{
+  font-size:22px;
+  font-weight:700;
+  color:#00ffbf;
+  text-shadow:0 0 12px rgba(0,255,170,0.7);
+}
+
+/* POPUP */
+.popup-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10002;
+}
+
+.popup-box{
+  width:320px;
+  background:rgba(25,25,35,.8);
+  border:1px solid rgba(0,255,170,0.35);
+  border-radius:18px;
+  backdrop-filter:blur(12px);
+  padding:1.8rem;
+  text-align:center;
+  box-shadow:0 0 25px rgba(0,255,170,0.3);
+  position:relative;
+}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:15px;
+  background:none;
+  border:none;
+  color:#00ffbf;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.popup-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.popup-btn{
+  border-radius:10px;
+  padding:12px 0;
+  font-weight:600;
+  cursor:pointer;
+  border:none;
+  transition:.3s;
+}
+
+.join-btn{
+  background:linear-gradient(135deg,#00ffbf,#008cff);
+  color:#fff;
+  box-shadow:0 0 14px rgba(0,255,200,0.5);
+}
+
+.join-btn:hover{
+  background:linear-gradient(135deg,#00ffe0,#00a6ff);
+  box-shadow:0 0 22px rgba(0,255,200,0.8);
+}
+
+.already-btn{
+  background:rgba(255,255,255,0.12);
+  color:#fff;
+}
+
+.already-btn:hover{
+  background:rgba(255,255,255,0.22);
+}
+
+/* VIDEO */
+.video-container{
+  width:100%;
+  height:50vh;
+  background:#000;
+  margin-top:70px;
+  position:relative;
+}
+
+.video-container iframe{
+  width:100%;
+  height:100%;
+  border:none;
+  object-fit:cover;
+}
+
+/* SECTIONS */
+.section-box{
+  width:92%;
+  margin:18px auto;
+  padding:18px;
+  border-radius:14px;
+  text-align:center;
+  background:rgba(0,255,170,0.07);
+  border:1px solid rgba(0,255,170,0.25);
+  backdrop-filter:blur(10px);
+}
+
+.section-title{
+  color:#00ffbf;
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+.action-btn{
+  width:100%;
+  padding:14px 0;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(135deg,#00ffbf,#0078ff);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.action-btn:hover{
+  transform:translateY(-2px);
+}
+
+/* FLOATING TELEGRAM BUTTON */
+.telegram-float{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#00ffbf,#0078ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:28px;
+  text-decoration:none;
+  box-shadow:0 0 18px rgba(0,255,200,0.6);
+  animation:floatPulse 1.6s infinite ease-in-out;
+  z-index:99999;
+}
+
+@keyframes floatPulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.15);}
+  100%{transform:scale(1);}
+}
+
+</style>
+</head>
+<body>
+
+<!-- VISITOR POPUP -->
+<div class="popup-overlay" id="visitorPopup" style="display:none;">
+  <div class="popup-box">
+    <button class="close-btn" onclick="closeVisitorPopup()">×</button>
+    <div class="popup-header">Total Visitors</div>
+    <img src="https://visit-counter.vercel.app/counter.png?page=crickcast.live&s=40&c=00ff00&bg=00000000"/>
+  </div>
+</div>
+
+<!-- JOIN TELEGRAM POPUP -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <button class="close-btn" onclick="closePopup()">×</button>
+    <div class="popup-header">Support Us🤝</div>
+    <div class="popup-subtitle">Join our Channel for live matches and instant updates..</div>
+    <div class="popup-buttons">
+      <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" class="popup-btn join-btn">Join Now</a>
+      <button class="popup-btn already-btn" onclick="closePopup(); startStream();">Already Joined</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-wrapper">
+    <svg viewBox="0 0 64 64">
+      <path d="M20 14 L24 20 L32 14 L40 20 L44 14 L44 24 H20 Z"/>
+      <path d="M32 8 L10 18 V32 C10 48 21 58 32 60 C43 58 54 48 54 32 V18 Z"/>
+    </svg>
+    <span class="logo-text">CRICKCAST</span>
+  </div>
+</header>
+
+<!-- VIDEO (✅ FIXED PLAYBACK) -->
+<div class="video-container">
+  <iframe
+    src="https://raw.githubusercontent.com/StmpupCricket/Star-Sports-Hindi-json/refs/heads/main/data.json" 
+
+    frameborder="0"
+    allowfullscreen
+    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-popups"
+  ></iframe>
+</div>
+
+<!-- FOLLOW SECTION -->
+<div class="section-box">
+  <div class="section-title">🔔 Follow Us for Updates</div>
+  <a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank">
+    <button class="action-btn">Join Telegram Channel</button>
+  </a>
+</div>
+
+<!-- SHARE SECTION -->
+<div class="section-box">
+  <div class="section-title">🔗 Share This Page</div>
+  <button class="action-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('✅ Link Copied! Share Now');">
+    Copy & Share This Page
+  </button>
+</div>
+
+<!-- FLOATING TELEGRAM BUTTON -->
+<a href="https://t.me/+r_4JF-IieX0wNjU9" target="_blank" class="telegram-float">📣</a>
+
+<script>
+function closePopup(){
+  document.getElementById('popup').style.display='none';
+}
+
+function startStream(){
+  document.querySelector('.video-container iframe').src = document.querySelector('.video-container iframe').src;
+}
+
+function closeVisitorPopup(){
+  document.getElementById('visitorPopup').style.display='none';
+}
+</script>
+
+</body>
 </html>
 
 
