@@ -26,10 +26,9 @@
       width: 100%;
       height: 100%;
       background: #000;
-      /* object-fit: contain; */ /* Changed to cover for full screen video */
-      object-fit: cover;
+      object-fit: cover; /* Video will cover the entire screen */
     }
-    /* Shaka Spinner Hiding */
+    /* Shaka Spinner Hiding (Keep this if you don't want a loading icon) */
     .shaka-spinner-container,
     .shaka-spinner,
     .shaka-spinner-svg {
@@ -78,11 +77,11 @@
         }
       });
   
-      // ✅ UPDATED HLS Stream URL
-      let streamUrl = "https://dishmt.slivcdn.com/hls/live/2020592/TEN3SD/master.m3u8?hdnea=exp=1765899002~acl=/*~id=63513396016461956128980545981733~hmac=94c2cfe66b891ef575b6cfff3271bf81c3900e843c66d42a112b999903b179dc";
+      // ✅ UPDATED Working HLS Stream URL (Mux Demo Stream)
+      // NOTE: Replace this with your actual live link if you find a working one.
+      let streamUrl = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
   
-      // --- Player Configuration (Optimized for Live/Low Latency) ---
-      // DRM configuration is removed as the new HLS link appears unencrypted.
+      // --- Player Configuration (Optimized for Low Latency) ---
       player.configure({
         streaming: {
           lowLatencyMode: true,
@@ -97,7 +96,6 @@
           },
           segmentRequestTimeout: 8000,
           segmentPrefetchLimit: 2,
-          // Explicitly enable native HLS support on Safari for better performance
           useNativeHlsOnSafari: true
         },
         manifest: {
