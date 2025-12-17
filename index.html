@@ -1,359 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kohlity - Free Cricket Streaming</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Nation - Free Cricket Streaming</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            color: #fff;
-            min-height: 100vh;
-        }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
 
-        .header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
+    .header {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
 
-        .logo {
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(45deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-        }
+    .logo {
+      font-size: 2.5em;
+      font-weight: 700;
+      background: linear-gradient(45deg, #00d4ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
 
-        .tagline {
-            font-size: 0.9em;
-            color: #00ff88;
-            margin-top: 5px;
-        }
+    .tagline {
+      font-size: 0.9em;
+      color: #00ff88;
+      margin-top: 5px;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
 
-        .video-container {
-            position: relative;
-            background: #000;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            margin-bottom: 30px;
-        }
+    .video-container {
+      position: relative;
+      background: #000;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+    }
 
-        #videoPlayer {
-            width: 100%;
-            height: auto;
-            min-height: 400px;
-            display: block;
-        }
+    #contentFrame {
+      width: 100%;
+      height: 600px;
+      min-height: 400px;
+      display: block;
+      border: none;
+    }
 
-        .live-badge {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #ff0000;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: pulse 2s infinite;
-        }
+    .live-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #ff0000;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: pulse 2s infinite;
+      z-index: 10;
+    }
 
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
-        }
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
 
-        .info-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
+    .info-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
 
-        .info-section h2 {
-            color: #00ff88;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
+    .info-section h2 {
+      color: #00ff88;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
 
-        .telegram-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            font-size: 1.1em;
-            font-weight: 600;
-            background: linear-gradient(45deg, #0088cc, #00aaff);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 50px;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.3);
-        }
+    .telegram-btn {
+      display: inline-block;
+      padding: 15px 40px;
+      font-size: 1.1em;
+      font-weight: 600;
+      background: linear-gradient(45deg, #0088cc, #00aaff);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 50px;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 136, 204, 0.3);
+    }
 
-        .telegram-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 136, 204, 0.5);
-        }
+    .telegram-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0, 136, 204, 0.5);
+    }
 
-        /* Popup Modal */
-        .modal {
-            display: block;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s ease;
-        }
+    /* Popup Modal */
+    .modal {
+      display: block;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+    }
 
-        .modal.hidden {
-            display: none !important;
-        }
+    .modal.hidden {
+      display: none !important;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
-        .modal-content {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            margin: 10% auto;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
-            animation: slideDown 0.4s ease;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
+    .modal-content {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      margin: 10% auto;
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+      animation: slideDown 0.4s ease;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
 
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
 
-        .modal-content h2 {
-            font-size: 2em;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .modal-content h2 {
+      font-size: 2em;
+      margin-bottom: 15px;
+      background: linear-gradient(45deg, #00d4ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        .modal-content p {
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.6;
-        }
+    .modal-content p {
+      font-size: 1.1em;
+      margin-bottom: 30px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
 
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-        .btn {
-            padding: 15px 30px;
-            font-size: 1.1em;
-            font-weight: 600;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            font-family: 'Poppins', sans-serif;
-        }
+    .btn {
+      padding: 15px 30px;
+      font-size: 1.1em;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        .btn-join {
-            background: linear-gradient(45deg, #00d4ff, #0099ff);
-            color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        }
+    .btn-join {
+      background: linear-gradient(45deg, #00d4ff, #0099ff);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    }
 
-        .btn-join:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
-        }
+    .btn-join:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
+    }
 
-        .btn-already {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
+    .btn-already {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
 
-        .btn-already:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
+    .btn-already:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
 
-        .telegram-icon {
-            display: inline-block;
-            margin-right: 8px;
-            font-size: 1.3em;
-        }
+    .telegram-icon {
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 1.3em;
+    }
 
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2em;
-            }
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 2em;
+      }
 
-            .modal-content {
-                margin: 20% auto;
-                padding: 30px 20px;
-                max-width: 90%;
-            }
+      .modal-content {
+        margin: 20% auto;
+        padding: 30px 20px;
+        max-width: 90%;
+      }
 
-            #videoPlayer {
-                min-height: 250px;
-            }
-        }
-    </style>
+      #contentFrame {
+        height: 300px;
+        min-height: 250px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Popup Modal -->
-    <div id="supportModal" class="modal">
-        <div class="modal-content">
-            <h2>🏏 Support Us!</h2>
-            <p>Join our Telegram channel to get updates on live matches and support free cricket streaming!</p>
-            <div class="button-group">
-                <a href="https://t.me/+H4SNbEBhYfA1Mzg1" target="_blank" class="btn btn-join">
-                    <span class="telegram-icon">📱</span> JOIN TELEGRAM
-                </a>
-                <button onclick="closeModal()" class="btn btn-already">
-                    ✓ ALREADY JOINED
-                </button>
-            </div>
-        </div>
+  <!-- Popup Modal -->
+  <div id="supportModal" class="modal">
+    <div class="modal-content">
+      <h2>🏏 Support Us!</h2>
+      <p>Join our Telegram channel to get updates on live matches and support free cricket streaming!</p>
+      <div class="button-group">
+        <a href="https://t.me/+LCMBabNnxhM5YmQ1" target="_blank" class="btn btn-join">
+          <span class="telegram-icon">📱</span> JOIN TELEGRAM
+        </a>
+        <button onclick="closeModal()" class="btn btn-already">
+          ✓ ALREADY JOINED
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">CRICKET NATION</div>
+    <div class="tagline">Free Cricket Streaming - Live & HD</div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="video-container">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        LIVE
+      </div>
+    <iframe id="contentFrame"
+          sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
+          frameborder="0"
+          gesture="media"
+          allow="encrypted-media"
+          allowfullscreen="true"
+          scrolling="no"
+          src="https://cricketstan.github.io/channel-10">
+  </iframe>
     </div>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">KOHLITY</div>
-        <div class="tagline">Free Cricket Streaming - Live & HD</div>
+    <div class="info-section">
+      <h2>Join Our Telegram For Future Matches Free Links</h2>
+      <a href="https://t.me/+LCMBabNnxhM5YmQ1" target="_blank" class="telegram-btn">
+        📱 TELEGRAM
+      </a>
     </div>
+  </div>
+  
+  <script>
+    const modal = document.getElementById('supportModal');
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="video-container">
-            <div class="live-badge">
-                <div class="live-dot"></div>
-                LIVE
-            </div>
-            <video id="videoPlayer" controls autoplay></video>
-        </div>
+    // Close modal function
+    function closeModal() {
+      modal.style.display = 'none';
+      modal.classList.add('hidden');
+    }
 
-        <div class="info-section">
-            <h2>Join Our Telegram For Future Matches Free Links</h2>
-            <a href="https://t.me/+H4SNbEBhYfA1Mzg1" target="_blank" class="telegram-btn">
-                📱 TELEGRAM
-            </a>
-        </div>
-    </div>
+    // Show popup every time on page load/reload
+    window.onload = function() {
+      modal.style.display = 'block';
+      modal.classList.remove('hidden');
+    };
 
-    <!-- HLS.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    
-    <script>
-        const video = document.getElementById('videoPlayer');
-        const streamUrl = 'https://in-mc-fdlive.fancode.com/mumbai/136878_english_hls_6470d6f45053075ta-di_h264/index.m3u8';
-        const modal = document.getElementById('supportModal');
-
-        // Initialize video player with HLS
-        function initPlayer() {
-            if (Hls.isSupported()) {
-                const hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                });
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log('Autoplay prevented'));
-                });
-                hls.on(Hls.Events.ERROR, function(event, data) {
-                    if (data.fatal) {
-                        console.error('HLS Error:', data);
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.log('Autoplay prevented'));
-                });
-            }
-        }
-
-        // Close modal function
-        function closeModal() {
-            const modal = document.getElementById('supportModal');
-            modal.style.display = 'none';
-            modal.classList.add('hidden');
-        }
-
-        // Show popup every time on page load/reload
-        window.onload = function() {
-            const modal = document.getElementById('supportModal');
-            modal.style.display = 'block';
-            modal.classList.remove('hidden');
-            initPlayer();
-        };
-
-        // Prevent closing modal by clicking outside
-        modal.onclick = function(event) {
-            if (event.target === modal) {
-                event.stopPropagation();
-            }
-        };
-    </script>
+    // Prevent closing modal by clicking outside
+    modal.onclick = function(event) {
+      if (event.target === modal) {
+        event.stopPropagation();
+      }
+    };
+  </script>
 </body>
 </html>
