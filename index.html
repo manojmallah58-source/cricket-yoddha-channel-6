@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CricPro Live | 5:00 AM Fixed Edition</title>
+    <title>CricPro Live | Official IST Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,7 +41,7 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: none; flex-direction: column; z-index: 1000; overflow-y: auto; }
         .modal-header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; display: flex; align-items: center; gap: 15px; }
         .back-btn { cursor:pointer; font-size:1.5rem; }
-        .info-panel { margin: 10px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .info-panel { margin: 10px; padding: 20px; background: #fff; border-radius: 8px; }
         .loader-container { padding: 50px; text-align: center; }
         .loader { width: 40px; height: 40px; border: 4px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s infinite linear; margin: auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -69,7 +69,7 @@
 <div id="modal" class="modal">
     <div class="modal-header">
         <span class="back-btn" onclick="closeModal()">←</span>
-        <div id="m-header-title" style="font-weight:700;">Match Details</div>
+        <div id="m-header-title" style="font-weight:700;">Details</div>
     </div>
     <div id="scorecard-area"></div>
 </div>
@@ -87,47 +87,39 @@
     };
 
     /**
-     * ULTRA FIX: GMT 23:30 (Ashes) ko 5:00 AM IST dikhane ke liye.
+     * ULTRA FIX: Manual IST Offset (+5.5 hours) for forced accuracy.
      */
     const formatMatchDateIST = (dateStringGMT) => {
         if (!dateStringGMT) return "TBD";
         
-        // GMT date create karein
-        const date = new Date(dateStringGMT);
+        // GMT date parsing
+        const gmtDate = new Date(dateStringGMT);
         
-        // Intl.DateTimeFormat sabse accurate hai time conversion ke liye
-        const timeFormatter = new Intl.DateTimeFormat('en-IN', {
-            timeZone: 'Asia/Kolkata',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-        });
+        // Force IST calculation by adding 5 hours and 30 minutes manually to the GMT timestamp
+        // This bypasses any automatic browser timezone interference
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const istDate = new Date(gmtDate.getTime() + istOffset);
 
-        const dateFormatter = new Intl.DateTimeFormat('en-IN', {
-            timeZone: 'Asia/Kolkata',
-            day: 'numeric',
-            month: 'short'
-        });
+        // Standard formatting options for IST
+        const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
+        const dateOptions = { day: 'numeric', month: 'short', timeZone: 'UTC' };
 
-        const timeStr = timeFormatter.format(date).toLowerCase().replace(/\s/g, '');
-        const matchDateStr = dateFormatter.format(date);
+        const timeStr = istDate.toLocaleTimeString('en-IN', timeOptions).toLowerCase().replace(/\s/g, '');
+        const dateStr = istDate.toLocaleDateString('en-IN', dateOptions);
 
-        // Aaj aur Kal ka logic (IST ke mutabik)
-        const nowInIST = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        const today = new Date(nowInIST);
-        today.setHours(0,0,0,0);
-
-        const matchInIST = new Date(date.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-        const matchCompare = new Date(matchInIST);
-        matchCompare.setHours(0,0,0,0);
-
-        const diffTime = matchCompare - today;
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        // Relative Day Calculation (Today/Tomorrow)
+        const now = new Date();
+        const nowIST = new Date(now.getTime() + istOffset);
+        
+        const today = new Date(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate());
+        const matchDay = new Date(istDate.getUTCFullYear(), istDate.getUTCMonth(), istDate.getUTCDate());
+        
+        const diffDays = Math.floor((matchDay - today) / (1000 * 60 * 60 * 24));
 
         let dayLabel = "";
         if (diffDays === 0) dayLabel = "Today";
         else if (diffDays === 1) dayLabel = "Tomorrow";
-        else dayLabel = matchDateStr;
+        else dayLabel = dateStr;
 
         return `${dayLabel} at ${timeStr} IST`;
     };
@@ -139,7 +131,7 @@
         
         let filtered = allMatches.filter(m => m.ms === statusMap[currentTab]);
 
-        // SORTING FIX: Jo match pehle hoga wo upar aayega
+        // SORTING: Chronological order (Earliest first)
         if (currentTab === 'upcoming') {
             filtered.sort((a, b) => new Date(a.dateTimeGMT) - new Date(b.dateTimeGMT));
         } else if (currentTab === 'recent') {
@@ -205,10 +197,8 @@
         getElement('scorecard-area').innerHTML = `
             <div class="info-panel">
                 <p><strong>Series:</strong> ${match.series}</p>
-                <p><strong>Time:</strong> ${formatMatchDateIST(match.dateTimeGMT)}</p>
+                <p><strong>Scheduled:</strong> ${formatMatchDateIST(match.dateTimeGMT)}</p>
                 <p><strong>Status:</strong> ${match.status}</p>
-                <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
-                <p style="color:#666; font-size:0.9rem;">Scorecard updates will start when the match begins.</p>
             </div>`;
     }
 
@@ -224,3 +214,4 @@
 
 </body>
 </html>
+
