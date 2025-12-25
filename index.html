@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CricPro Live | Final Fixed Edition</title>
+    <title>CricPro Live | 5:00 AM Fixed Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -86,38 +86,50 @@
         getElement('ist-clock').querySelector('span').innerText = `IST: ${ist}`;
     };
 
-    // Correct IST Conversion Logic
+    /**
+     * ULTRA FIX: GMT 23:30 (Ashes) ko 5:00 AM IST dikhane ke liye.
+     */
     const formatMatchDateIST = (dateStringGMT) => {
         if (!dateStringGMT) return "TBD";
         
-        // Manual GMT to IST calculation (+5:30)
-        const gmtDate = new Date(dateStringGMT);
-        const istTime = new Date(gmtDate.getTime()); // JavaScript already converts based on system, but we force display
+        // GMT date create karein
+        const date = new Date(dateStringGMT);
         
-        const options = { 
-            timeZone: 'Asia/Kolkata', 
-            hour: 'numeric', 
-            minute: '2-digit', 
-            hour12: true 
-        };
-        
-        const timePart = istTime.toLocaleTimeString('en-IN', options).toLowerCase().replace(/\s/g, '');
-        
-        // Date labeling logic
-        const nowInIST = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-        const matchInIST = new Date(istTime.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
-        
-        nowInIST.setHours(0,0,0,0);
-        matchInIST.setHours(0,0,0,0);
-        
-        const diffDays = Math.round((matchInIST - nowInIST) / (1000 * 60 * 60 * 24));
+        // Intl.DateTimeFormat sabse accurate hai time conversion ke liye
+        const timeFormatter = new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+
+        const dateFormatter = new Intl.DateTimeFormat('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            day: 'numeric',
+            month: 'short'
+        });
+
+        const timeStr = timeFormatter.format(date).toLowerCase().replace(/\s/g, '');
+        const matchDateStr = dateFormatter.format(date);
+
+        // Aaj aur Kal ka logic (IST ke mutabik)
+        const nowInIST = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+        const today = new Date(nowInIST);
+        today.setHours(0,0,0,0);
+
+        const matchInIST = new Date(date.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+        const matchCompare = new Date(matchInIST);
+        matchCompare.setHours(0,0,0,0);
+
+        const diffTime = matchCompare - today;
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
         let dayLabel = "";
         if (diffDays === 0) dayLabel = "Today";
         else if (diffDays === 1) dayLabel = "Tomorrow";
-        else dayLabel = istTime.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        else dayLabel = matchDateStr;
 
-        return `${dayLabel} at ${timePart} IST`;
+        return `${dayLabel} at ${timeStr} IST`;
     };
 
     const renderMatchList = () => {
@@ -127,7 +139,7 @@
         
         let filtered = allMatches.filter(m => m.ms === statusMap[currentTab]);
 
-        // SORTING: Pehle aane wale matches upar (By Date)
+        // SORTING FIX: Jo match pehle hoga wo upar aayega
         if (currentTab === 'upcoming') {
             filtered.sort((a, b) => new Date(a.dateTimeGMT) - new Date(b.dateTimeGMT));
         } else if (currentTab === 'recent') {
@@ -135,7 +147,7 @@
         }
 
         if (filtered.length === 0) {
-            list.innerHTML = `<div class="empty-state"><h3>No ${currentTab} matches.</h3></div>`;
+            list.innerHTML = `<div class="empty-state"><h3>No ${currentTab} matches found.</h3></div>`;
             return;
         }
 
@@ -176,8 +188,7 @@
             allMatches = (json.data || []).filter(m => m.t1 && m.t2 && m.dateTimeGMT);
             renderMatchList();
         } catch (error) {
-            console.error(error);
-            getElement('match-list-container').innerHTML = `<div class="empty-state"><h3>Failed to sync data.</h3></div>`;
+            getElement('match-list-container').innerHTML = `<div class="empty-state"><h3>Failed to load data.</h3></div>`;
         }
     };
 
@@ -197,7 +208,7 @@
                 <p><strong>Time:</strong> ${formatMatchDateIST(match.dateTimeGMT)}</p>
                 <p><strong>Status:</strong> ${match.status}</p>
                 <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
-                <p style="color:#666; font-size:0.9rem;">Full scorecard updates will be available when the match is live.</p>
+                <p style="color:#666; font-size:0.9rem;">Scorecard updates will start when the match begins.</p>
             </div>`;
     }
 
@@ -213,10 +224,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
