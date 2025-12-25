@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CricPro Live | Official IST Final</title>
+    <title>CricPro Live | GMT to IST Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -45,6 +45,7 @@
         .loader-container { padding: 50px; text-align: center; }
         .loader { width: 40px; height: 40px; border: 4px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s infinite linear; margin: auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .empty-state { text-align: center; padding: 50px; color: var(--text-light); }
     </style>
 </head>
 <body>
@@ -87,41 +88,45 @@
     };
 
     /**
-     * ULTRA FIX: Manual IST Offset (+5.5 hours) for forced accuracy.
+     * CORE FIX: GMT se IST (+5:30) manual conversion.
+     * Yeh logic Ashes ke 23:30 GMT ko perfect 5:00 AM IST mein badlega.
      */
     const formatMatchDateIST = (dateStringGMT) => {
         if (!dateStringGMT) return "TBD";
         
-        // GMT date parsing
+        // GMT String ko Date object mein badlein (UTC treatment)
         const gmtDate = new Date(dateStringGMT);
         
-        // Force IST calculation by adding 5 hours and 30 minutes manually to the GMT timestamp
-        // This bypasses any automatic browser timezone interference
-        const istOffset = 5.5 * 60 * 60 * 1000;
-        const istDate = new Date(gmtDate.getTime() + istOffset);
+        // IST ke liye 5 ghante 30 minute add karein (millisecond mein)
+        const IST_OFFSET = (5 * 60 + 30) * 60 * 1000;
+        const istTimestamp = gmtDate.getTime() + IST_OFFSET;
+        const istDate = new Date(istTimestamp);
 
-        // Standard formatting options for IST
-        const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
-        const dateOptions = { day: 'numeric', month: 'short', timeZone: 'UTC' };
+        // Formatting (Using UTC to prevent browser double-offset)
+        const timeStr = istDate.getUTCHours() % 12 || 12;
+        const minStr = istDate.getUTCMinutes().toString().padStart(2, '0');
+        const ampm = istDate.getUTCHours() >= 12 ? 'pm' : 'am';
+        
+        const fullTime = `${timeStr}:${minStr}${ampm}`;
 
-        const timeStr = istDate.toLocaleTimeString('en-IN', timeOptions).toLowerCase().replace(/\s/g, '');
-        const dateStr = istDate.toLocaleDateString('en-IN', dateOptions);
-
-        // Relative Day Calculation (Today/Tomorrow)
+        // Date Label Logic (Today/Tomorrow)
         const now = new Date();
-        const nowIST = new Date(now.getTime() + istOffset);
+        const nowIST = new Date(now.getTime() + IST_OFFSET);
         
-        const today = new Date(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate());
-        const matchDay = new Date(istDate.getUTCFullYear(), istDate.getUTCMonth(), istDate.getUTCDate());
+        const todayUTC = new Date(Date.UTC(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate()));
+        const matchUTC = new Date(Date.UTC(istDate.getUTCFullYear(), istDate.getUTCMonth(), istDate.getUTCDate()));
         
-        const diffDays = Math.floor((matchDay - today) / (1000 * 60 * 60 * 24));
+        const diffDays = Math.round((matchUTC - todayUTC) / (1000 * 60 * 60 * 24));
 
         let dayLabel = "";
         if (diffDays === 0) dayLabel = "Today";
         else if (diffDays === 1) dayLabel = "Tomorrow";
-        else dayLabel = dateStr;
+        else {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            dayLabel = `${istDate.getUTCDate()} ${months[istDate.getUTCMonth()]}`;
+        }
 
-        return `${dayLabel} at ${timeStr} IST`;
+        return `${dayLabel} at ${fullTime} IST`;
     };
 
     const renderMatchList = () => {
@@ -131,7 +136,7 @@
         
         let filtered = allMatches.filter(m => m.ms === statusMap[currentTab]);
 
-        // SORTING: Chronological order (Earliest first)
+        // SORTING: Chronological order (Pehele aane wale match upar)
         if (currentTab === 'upcoming') {
             filtered.sort((a, b) => new Date(a.dateTimeGMT) - new Date(b.dateTimeGMT));
         } else if (currentTab === 'recent') {
@@ -214,4 +219,5 @@
 
 </body>
 </html>
+
 
