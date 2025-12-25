@@ -3,146 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CricPro Live | Final Verified Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>CricPro Live | Professional Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #00a82d; --primary-dark: #008f26; --bg: #f4f7f6;
-            --white: #ffffff; --text-dark: #222; --text-light: #666;
-            --blue: #1976d2; --border-color: #e0e0e0; --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
+        :root { --primary: #00a82d; --bg: #f4f7f6; --white: #ffffff; --text-dark: #222; --blue: #1976d2; --live: #d32f2f; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: var(--text-dark); }
-        header { background: var(--primary); color: white; padding: 12px 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .header-title { font-weight: 800; font-size: 1.5rem; }
-        .header-controls { display: flex; align-items: center; gap: 15px; }
-        .ist-clock { font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
-        .refresh-btn { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
-        .tabs { display: flex; border-bottom: 1px solid var(--primary-dark); }
-        .tab { flex: 1; text-align: center; padding: 12px; font-weight: 600; cursor: pointer; opacity: 0.7; border-bottom: 3px solid transparent; transition: all 0.2s ease; }
-        .tab:hover { opacity: 1; background: rgba(0,0,0,0.1); }
+        header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .ist-clock { font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 4px 12px; border-radius: 20px; }
+        .tabs { display: flex; background: var(--primary); gap: 10px; }
+        .tab { flex: 1; text-align: center; padding: 12px; font-weight: 600; cursor: pointer; opacity: 0.6; border-bottom: 3px solid transparent; transition: 0.3s; }
         .tab.active { opacity: 1; border-bottom: 3px solid white; }
-        .container { max-width: 650px; margin: 15px auto; padding: 0 15px; }
-        .match-card {
-            background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px;
-            box-shadow: var(--shadow); cursor: pointer; border: 1px solid var(--border-color);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .match-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
-        .series-name { font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px; font-weight: 500; }
+        
+        .container { max-width: 600px; margin: 10px auto; padding: 10px; }
+        .match-card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
         .team-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
-        .team-info { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 1.05rem; }
-        .team-logo { width: 28px; height: 28px; object-fit: contain; background-color: #f0f0f0; border-radius: 50%; }
-        .team-score { font-weight: 700; font-size: 1.1rem; }
-        .match-footer { font-size: 0.85rem; font-weight: 600; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0f0; color: #d32f2f; }
-        .match-footer.upcoming { color: var(--blue); display: flex; align-items: center; gap: 8px; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: none; flex-direction: column; z-index: 1000; overflow-y: auto; animation: slideInUp 0.3s ease; }
-        @keyframes slideInUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .back-btn { cursor:pointer; font-size:1.5rem; padding: 0 5px; }
-        .info-panel { margin: 8px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-        .info-panel h3 { font-size: 1.2rem; margin-bottom: 15px; }
-        .info-panel p { margin-bottom: 10px; font-size: 0.95rem; color: var(--text-light); }
-        .info-panel p strong { color: var(--text-dark); }
-        .loader-container { padding: 50px; text-align: center; }
-        .loader { width: 40px; height: 40px; border: 4px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s infinite linear; margin: auto; }
+        .team-score { font-weight: 700; font-size: 1.15rem; }
+        
+        /* Modal Styling */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f3f2; display: none; flex-direction: column; z-index: 1000; overflow-y: auto; }
+        .modal-header { background: var(--primary); color: white; padding: 15px; position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 15px; }
+        .score-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        
+        .inning-accordion { background: #fff; margin-bottom: 10px; }
+        .inning-header { padding: 15px; background: #fff; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .inning-header.active-header { background: #e8f5e9; color: var(--primary); border-left: 5px solid var(--primary); }
+        
+        .table-pro { width: 100%; border-collapse: collapse; min-width: 400px; }
+        .table-pro th { text-align: left; padding: 10px; font-size: 0.7rem; color: #888; border-bottom: 1px solid #eee; }
+        .table-pro td { padding: 12px 10px; font-size: 0.85rem; border-bottom: 1px solid #f9f9f9; }
+        
+        .loader { width: 35px; height: 35px; border: 4px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s infinite linear; margin: 50px auto; display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .empty-state { text-align: center; padding: 50px; color: var(--text-light); }
+        
+        .live-dot { height: 8px; width: 8px; background-color: var(--live); border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="header-top">
-        <h2 class="header-title">CricPro</h2>
-        <div class="header-controls">
-            <div id="ist-clock" class="ist-clock"><i class="fa-regular fa-clock"></i><span>--:--</span></div>
-            <button class="refresh-btn" id="refresh-btn" title="Refresh Scores"><i class="fa-solid fa-rotate-right"></i></button>
-        </div>
+        <h2 style="font-weight: 800; letter-spacing: -0.5px;">CricPro Live</h2>
+        <div id="ist-clock" class="ist-clock">IST: --:--</div>
     </div>
     <div class="tabs">
-        <div class="tab active" onclick="switchTab('live', this)">LIVE</div>
-        <div class="tab" onclick="switchTab('upcoming', this)">UPCOMING</div>
-        <div class="tab" onclick="switchTab('recent', this)">RECENT</div>
+        <div id="tab-live" class="tab active" onclick="switchTab('live', this)">LIVE</div>
+        <div id="tab-upcoming" class="tab" onclick="switchTab('upcoming', this)">UPCOMING</div>
+        <div id="tab-recent" class="tab" onclick="switchTab('recent', this)">RECENT</div>
     </div>
 </header>
-<div class="container" id="match-list-container"></div>
+
+<div class="container"><div id="match-list"></div></div>
+
 <div id="modal" class="modal">
     <div class="modal-header">
-        <span class="back-btn" onclick="closeModal()">←</span>
-        <div id="m-header-title" style="font-weight:700;">Details</div>
+        <span onclick="closeModal()" style="cursor:pointer; font-size:1.8rem;">&larr;</span>
+        <div id="m-header-title" style="font-weight:700; font-size: 1.1rem;">Scorecard</div>
     </div>
     <div id="scorecard-area"></div>
 </div>
 
 <script>
-    // --- CONFIGURATION ---
-    const API_KEY = "5715ed8e-d32d-4597-bda2-a66e2f8ad11e"; // अपना API Key यहाँ डालें
+    const API_KEY = "5715ed8e-d32d-4597-bda2-a66e2f8ad11e"; 
     let allMatches = [];
     let currentTab = 'live';
 
-    // --- UTILITY FUNCTIONS ---
-    const getElement = (id) => document.getElementById(id);
+    function updateClock() {
+        const ist = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        document.getElementById('ist-clock').innerText = `IST: ${ist}`;
+    }
+    setInterval(updateClock, 1000);
 
-    const updateClock = () => {
-        const ist = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
-        getElement('ist-clock').querySelector('span').innerText = `IST: ${ist}`;
-    };
-
-    /**
-     * **[FINAL & ACCURATE V2]** यह फंक्शन API से मिले GMT समय को 100% सही भारतीय समय में बदलता है।
-     * यह सीधे GMT समय में +5 घंटे और 30 मिनट जोड़कर अचूक भारतीय समय निकालता है।
-     * @param {string} dateStringGMT - API से मिला हुआ ग्लोबल समय (जैसे, "2025-12-25T23:30:00Z").
-     * @returns {string} पूरी तरह से सही भारतीय समय (जैसे, "Tomorrow at 5:00 am IST").
-     */
-    const formatMatchDateIST = (dateStringGMT) => {
-        if (!dateStringGMT) return "Time not available";
-        
-        const gmtDate = new Date(dateStringGMT);
-        if (isNaN(gmtDate.getTime())) return "Invalid date";
-
-        const IST_OFFSET = (5 * 60 + 30) * 60 * 1000;
-        const istTimestamp = gmtDate.getTime() + IST_OFFSET;
-        const istDate = new Date(istTimestamp);
-
-        const now = new Date();
-        const istNow = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-        
-        const todayStart = new Date(istNow.getFullYear(), istNow.getMonth(), istNow.getDate());
-        const tomorrowStart = new Date(todayStart);
-        tomorrowStart.setDate(todayStart.getDate() + 1);
-        const dayAfterTomorrowStart = new Date(tomorrowStart);
-        dayAfterTomorrowStart.setDate(tomorrowStart.getDate() + 1);
-
-        let dayLabel;
-        if (istTimestamp >= todayStart.getTime() && istTimestamp < tomorrowStart.getTime()) {
-            dayLabel = "Today";
-        } else if (istTimestamp >= tomorrowStart.getTime() && istTimestamp < dayAfterTomorrowStart.getTime()) {
-            dayLabel = "Tomorrow";
-        } else {
-            dayLabel = istDate.toLocaleDateString('en-IN', { timeZone: 'UTC', day: 'numeric', month: 'short' });
+    async function fetchMatches() {
+        try {
+            const res = await fetch(`https://api.cricapi.com/v1/cricScore?apikey=${API_KEY}`);
+            const json = await res.json();
+            allMatches = json.data || [];
+            renderMatches();
+        } catch (e) { 
+            document.getElementById('match-list').innerHTML = "<p style='text-align:center; padding:20px;'>Failed to sync data. Check connection.</p>"; 
         }
+    }
 
-        const timeString = istDate.toLocaleTimeString('en-IN', { timeZone: 'UTC', hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+    function switchTab(type, el) {
+        currentTab = type;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderMatches();
+    }
 
-        return `${dayLabel} at ${timeString.replace(/\s/g, '')} IST`;
-    };
-    
-    // --- RENDER FUNCTIONS ---
-    const renderMatchList = () => {
-        const list = getElement('match-list-container');
+    function renderMatches() {
+        const list = document.getElementById('match-list');
         list.innerHTML = '';
-        const statusMap = { 'live': 'live', 'upcoming': 'fixture', 'recent': 'result' };
-        let filtered = allMatches.filter(m => m.ms === statusMap[currentTab]);
-
-        if (currentTab === 'upcoming') {
-            filtered.sort((a, b) => new Date(a.dateTimeGMT) - new Date(b.dateTimeGMT));
-        }
-
-        if (filtered.length === 0) {
-            list.innerHTML = `<div class="empty-state"><h3>No ${currentTab} matches found.</h3></div>`;
+        
+        let filtered = allMatches.filter(m => m.ms === (currentTab === 'live' ? 'live' : currentTab === 'upcoming' ? 'fixture' : 'result'));
+        
+        if(filtered.length === 0) {
+            list.innerHTML = `<p style="text-align:center; color:#888; margin-top:50px;">No ${currentTab} matches found.</p>`;
             return;
         }
 
@@ -150,81 +109,95 @@
             const card = document.createElement('div');
             card.className = 'match-card';
             card.onclick = () => openModal(m);
-            const isFixture = m.ms === 'fixture';
             card.innerHTML = `
-                <div class="series-name">${m.series}</div>
-                <div class="team-row">
-                    <div class="team-info"><img src="${m.t1img || ''}" class="team-logo" alt="${m.t1}"> <span>${m.t1}</span></div>
-                    ${!isFixture ? `<span class="team-score">${m.t1s || ''}</span>` : ''}
+                <div style="font-size:0.75rem; color:#888; margin-bottom:8px; display:flex; justify-content:space-between;">
+                    <span>${m.series}</span>
+                    <span>${m.tossWinner ? 'Toss: ' + m.tossWinner : ''}</span>
                 </div>
-                <div class="team-row">
-                    <div class="team-info"><img src="${m.t2img || ''}" class="team-logo" alt="${m.t2}"> <span>${m.t2}</span></div>
-                    ${!isFixture ? `<span class="team-score">${m.t2s || ''}</span>` : ''}
+                <div class="team-row"><span>${m.t1}</span><span class="team-score">${m.t1s || '0/0 (0)'}</span></div>
+                <div class="team-row"><span>${m.t2}</span><span class="team-score">${m.t2s || '0/0 (0)'}</span></div>
+                <div style="color:${currentTab === 'live' ? 'var(--live)' : '#555'}; font-size:0.85rem; font-weight:600; margin-top:8px; display:flex; align-items:center;">
+                    ${currentTab === 'live' ? '<span class="live-dot"></span>' : ''} ${m.status}
                 </div>
-                <div class="match-footer ${isFixture ? 'upcoming' : ''}">
-                    ${isFixture ? `<i class="fa-regular fa-calendar-alt"></i> ${formatMatchDateIST(m.dateTimeGMT)}` : m.status}
-                </div>`;
+            `;
             list.appendChild(card);
         });
-    };
-
-    // --- API & DATA HANDLING ---
-    const fetchMatches = async () => {
-        getElement('match-list-container').innerHTML = `<div class="loader-container"><div class="loader"></div></div>`;
-        try {
-            const response = await fetch(`https://api.cricapi.com/v1/cricScore?apikey=${API_KEY}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const json = await response.json();
-            allMatches = (json.data || []).filter(m => m.t1 && m.t2 && m.dateTimeGMT);
-            renderMatchList();
-        } catch (error) {
-            console.error("API Error:", error);
-            getElement('match-list-container').innerHTML = `<div class="empty-state"><h3>Failed to load data.</h3><p>Please check your connection and try refreshing.</p></div>`;
-        }
-    };
-
-    // --- UI INTERACTIONS ---
-    function switchTab(type, el) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        currentTab = type;
-        renderMatchList();
     }
-    
-    function openModal(match) {
-        const modal = getElement('modal');
-        const area = getElement('scorecard-area');
-        modal.style.display = 'flex';
-        getElement('m-header-title').innerText = `${match.t1} vs ${match.t2}`;
 
-        if (match.ms === 'fixture') {
-            area.innerHTML = `
-                <div class="info-panel">
-                    <h3>Match Information</h3>
-                    <p><strong>Series:</strong> ${match.series}</p>
-                    <p><strong>Match:</strong> ${match.t1} vs ${match.t2}</p>
-                    <p><strong><i class="fa-regular fa-clock"></i> Starts On:</strong> ${formatMatchDateIST(match.dateTimeGMT)}</p>
-                    <p><strong><i class="fa-solid fa-location-dot"></i> Venue:</strong> ${match.venue || 'To be announced'}</p>
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                    <p style="font-size: 0.8rem; color: var(--text-light);">The scorecard will be available once the match begins.</p>
-                </div>`;
-            return;
-        }
-        area.innerHTML = `<div class="empty-state"><p>Scorecard for this match is not implemented yet.</p></div>`;
+    async function openModal(m) {
+        const modal = document.getElementById('modal');
+        const area = document.getElementById('scorecard-area');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Stop background scroll
+        document.getElementById('m-header-title').innerText = `${m.t1} vs ${m.t2}`;
+        area.innerHTML = '<div class="loader"></div>';
+
+        try {
+            const res = await fetch(`https://api.cricapi.com/v1/match_scorecard?apikey=${API_KEY}&id=${m.id}`);
+            const json = await res.json();
+            const data = json.data;
+            
+            if (!data || !data.scorecard || data.scorecard.length === 0) { 
+                area.innerHTML = "<div style='padding:50px; text-align:center;'><p>Scorecard will appear once the match starts.</p></div>"; 
+                return; 
+            }
+
+            let html = `<div style="background:#e3f2fd; color:#1976d2; padding:15px; font-weight:600; font-size:0.9rem;">${m.status}</div>`;
+            
+            data.scorecard.forEach((inning, idx) => {
+                const isLastInning = idx === data.scorecard.length - 1;
+                
+                let batRows = (inning.batting || []).map(p => `
+                    <tr>
+                        <td><div style="color:var(--blue); font-weight:600;">${p.batsman.name}</div><div style="font-size:0.7rem; color:#888;">${p['dismissal-text']}</div></td>
+                        <td style="font-weight:700">${p.r}</td><td>${p.b}</td><td>${p['4s']}</td><td>${p['6s']}</td><td>${p.sr}</td>
+                    </tr>`).join('');
+
+                let bowlRows = (inning.bowling || []).map(b => `
+                    <tr>
+                        <td style="font-weight:600;">${b.bowler.name}</td>
+                        <td>${b.o}</td><td>${b.m}</td><td>${b.r}</td><td style="font-weight:700">${b.w}</td><td>${b.er}</td>
+                    </tr>`).join('');
+
+                html += `
+                    <div class="inning-accordion">
+                        <div class="inning-header ${isLastInning ? 'active-header' : ''}" onclick="toggleInning(${idx})">
+                            <div><div style="font-weight:800;">${inning.inning}</div></div>
+                            <div style="font-weight:800;">${inning.totals.R}-${inning.totals.W} (${inning.totals.OV}) ▾</div>
+                        </div>
+                        <div id="inning-content-${idx}" class="inning-content" style="display: ${isLastInning ? 'block' : 'none'}">
+                            <div class="score-table-wrapper">
+                                <table class="table-pro"><thead><tr><th>Batter</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr></thead><tbody>${batRows}</tbody></table>
+                            </div>
+                            <div style="padding:12px 15px; background:#f9f9f9; font-size:0.85rem; border-top:1px solid #eee;"><strong>Extras:</strong> ${inning.extras.r || 0} (b ${inning.extras.b}, lb ${inning.extras.lb}, w ${inning.extras.w}, nb ${inning.extras.nb})</div>
+                            <div style="background:#f0f0f0; padding:8px 15px; font-size:0.75rem; font-weight:700;">BOWLING</div>
+                            <div class="score-table-wrapper">
+                                <table class="table-pro"><thead><tr><th>Bowler</th><th>O</th><th>M</th><th>R</th><th>W</th><th>Eco</th></tr></thead><tbody>${bowlRows}</tbody></table>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            area.innerHTML = html;
+        } catch (e) { area.innerHTML = "<p style='text-align:center; padding:30px;'>Error fetching scorecard details.</p>"; }
+    }
+
+    function toggleInning(id) {
+        const content = document.getElementById(`inning-content-${id}`);
+        content.style.display = content.style.display === 'none' ? 'block' : 'none';
     }
 
     function closeModal() { 
-        getElement('modal').style.display = 'none'; 
+        document.getElementById('modal').style.display = 'none'; 
+        document.body.style.overflow = 'auto';
     }
-    
-    // --- INITIALIZATION ---
-    document.addEventListener('DOMContentLoaded', () => {
-        updateClock();
-        setInterval(updateClock, 60000);
-        fetchMatches();
-        getElement('refresh-btn').addEventListener('click', fetchMatches);
-    });
 
+    // Initialize and set Auto-Refresh
+    window.onload = () => { 
+        updateClock(); 
+        fetchMatches();
+        setInterval(fetchMatches, 60000); // Refresh every 1 minute
+    };
 </script>
 </body>
 </html>
+
