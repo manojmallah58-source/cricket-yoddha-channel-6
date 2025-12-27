@@ -1,531 +1,849 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Cricket Game – Android Bottom Nav</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Delete One Part</title>
+    
+    <!-- FONT AWESOME CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<!-- Font Awesome (Icons) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <style>
+        /* --- CSS STYLES --- */
 
-<style>
-/* ========== RESET & BASE ========== */
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-html,body{
-  height:100%;
-}
-body{
-  font-family:system-ui,-apple-system,"Roboto","Segoe UI",sans-serif;
-  background:radial-gradient(circle at 0% 0%,#ff4b72 0,#050816 40%,#140b3a 75%,#03d5ff 100%);
-  color:#f7f9ff;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
+        /* 1. Global & Root Styles */
+        :root {
+            --primary-bg: #f4f4f9;
+            --primary-card-bg: #ffffff;
+            --primary-text: #2c3e50;
+            --secondary-text: #7f8c8d;
+            --accent-color: #3498db;
+            --dark-accent-color: #2980b9;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --toolbar-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --splash-bg-start: #3a7bd5;
+            --splash-bg-end: #00d2ff;
+        }
 
-/* ========== APP WRAPPER ========== */
-.app-shell{
-  position:relative;
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  max-width:480px;
-  margin:0 auto;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-/* Top status style bar (fake) */
-.app-status-bar{
-  height:22px;
-  margin-top:4px;
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  padding:0 12px;
-  color:rgba(255,255,255,0.8);
-  font-size:11px;
-}
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-/* ========== CONTENT SCREENS ========== */
-.app-content{
-  position:relative;
-  flex:1;
-  padding:12px 16px 80px;
-  overflow-y:auto;
-}
+        #app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 480px; /* Simulates mobile device width */
+            margin: 0 auto;
+            background-color: var(--primary-card-bg);
+            box-shadow: 0 0 20px var(--shadow-color);
+            overflow: hidden;
+        }
 
-/* Shared card look for all screens */
-.screen-card{
-  background:rgba(4,7,20,0.72);
-  border-radius:22px;
-  padding:18px 16px 20px;
-  box-shadow:0 18px 55px rgba(0,0,0,0.6);
-  border:1px solid rgba(255,255,255,0.06);
-  backdrop-filter:blur(18px);
-}
+        /* 2. Screen Management */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 1;
+            transform: scale(1);
+            backface-visibility: hidden;
+        }
 
-/* Title & subtitle for demo */
-.screen-title{
-  font-size:20px;
-  font-weight:700;
-  letter-spacing:0.02em;
-  margin-bottom:4px;
-}
-.screen-subtitle{
-  font-size:13px;
-  color:rgba(229,235,255,0.76);
-  margin-bottom:16px;
-}
+        .screen.hidden {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
 
-/* Fake content / placeholders */
-.pill-row{
-  display:flex;
-  gap:8px;
-  margin-bottom:16px;
-  flex-wrap:wrap;
-}
-.pill-chip{
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:11px;
-  background:linear-gradient(135deg,#22e4ff,#2af598);
-  color:#08101e;
-  font-weight:600;
-  box-shadow:0 6px 14px rgba(0,0,0,0.55);
-}
-.pill-chip.alt{
-  background:linear-gradient(135deg,#ffdd55,#ff4b72);
-}
-.card-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-.small-card{
-  border-radius:18px;
-  padding:12px 10px;
-  font-size:11px;
-  background:linear-gradient(145deg,rgba(17,24,61,0.98),rgba(4,7,20,0.9));
-  border:1px solid rgba(255,255,255,0.05);
-  box-shadow:0 8px 22px rgba(0,0,0,0.7);
-}
-.small-card strong{
-  display:block;
-  margin-bottom:4px;
-  font-size:12px;
-}
+        /* 3. Splash Screen */
+        #splash-screen {
+            background: linear-gradient(45deg, var(--splash-bg-start), var(--splash-bg-end));
+            color: white;
+            z-index: 100;
+        }
+        #splash-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        #splash-tagline {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
 
-/* Simple circular stat indicator to match neon style */
-.circle-stat{
-  margin:10px auto 18px;
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  background:conic-gradient(from 260deg,#2af598 0,#22e4ff 32%,#ffdd55 65%,#ff4b72 90%,#2af598 1turn);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 18px 45px rgba(0,0,0,0.7);
-}
-.circle-inner{
-  width:110px;
-  height:110px;
-  border-radius:50%;
-  background:radial-gradient(circle at 30% 0,#202642,#050816 55%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-}
+        /* 4. Home Screen */
+        #home-screen {
+            justify-content: center;
+            padding: 20px;
+        }
+        #home-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+        .play-button {
+            padding: 15px 60px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .play-button:active {
+            background-color: var(--dark-accent-color);
+            transform: scale(0.95);
+        }
+        .sound-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background: var(--primary-bg);
+            color: var(--secondary-text);
+            border-radius: 50%;
+            cursor: pointer;
+        }
 
-/* Hide all screens by default, show active */
-.screen{
-  display:none;
-}
-.screen.active{
-  display:block;
-}
+        /* 5. Game Screen */
+        #game-screen {
+            justify-content: flex-start;
+            background-color: var(--primary-bg);
+        }
 
-/* ========== BOTTOM NAVIGATION ========== */
-.bottom-nav{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  height:72px;
-  padding:10px 18px 16px;
-  background:rgba(3,6,19,0.92);
-  backdrop-filter:blur(22px);
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:16px;
-  box-shadow:0 -18px 45px rgba(0,0,0,0.9);
-  z-index:99;
-}
-.bottom-nav-inner{
-  width:100%;
-  max-width:480px;
-  margin:0 auto;
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:14px;
-}
+        /* App Bar (Toolbar) */
+        .app-bar {
+            width: 100%;
+            height: 60px;
+            background-color: var(--toolbar-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            flex-shrink: 0;
+        }
+        .app-bar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .app-bar-icon {
+            font-size: 1.4rem;
+            width: 44px;
+            height: 44px;
+            line-height: 44px;
+            text-align: center;
+            color: var(--primary-text);
+            cursor: pointer;
+        }
 
-/* Nav item text+icon */
-.nav-item{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:2px;
-  color:#808bac;
-  font-size:10px;
-  text-decoration:none;
-  position:relative;
-  transition:color .22s ease, transform .22s ease;
-}
-.nav-item i{
-  font-size:20px;
-  transition:transform .22s ease;
-}
+        /* Canvas Area */
+        #canvas-container {
+            position: relative;
+            width: 90%;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            aspect-ratio: 1 / 1; /* Make it a square, adjustable */
+            touch-action: none; /* Prevents scrolling while drawing */
+        }
+        .game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #bottom-canvas { z-index: 1; }
+        #top-canvas { z-index: 2; cursor: crosshair; }
 
-/* underline / glow halo */
-.nav-item::before{
-  content:"";
-  position:absolute;
-  top:-4px;
-  left:50%;
-  transform:translateX(-50%);
-  width:36px;
-  height:30px;
-  border-radius:999px;
-  background:radial-gradient(circle at 30% 0,#2af598 0,#22e4ff 55%,transparent 75%);
-  opacity:0;
-  filter:blur(12px);
-  z-index:-1;
-  transition:opacity .22s ease;
-}
-.nav-item.active{
-  color:#f5fbff;
-}
-.nav-item.active i{
-  transform:translateY(-2px);
-}
-.nav-item.active::before{
-  opacity:1;
-}
+        /* Shake Animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
 
-/* Central FAB */
-.nav-fab-wrapper{
-  flex:0;
-  position:relative;
-}
-.nav-fab-glow{
-  position:absolute;
-  inset:-14px;
-  border-radius:999px;
-  background:radial-gradient(circle at 30% 0,#ffdd55 0,#ff4b72 45%,transparent 75%);
-  opacity:.85;
-  filter:blur(16px);
-  z-index:-1;
-}
-.nav-fab{
-  width:62px;
-  height:62px;
-  border-radius:50%;
-  border:none;
-  outline:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:conic-gradient(from 210deg,#2af598,#22e4ff,#ffdd55,#ff4b72,#2af598);
-  color:#050816;
-  font-size:26px;
-  cursor:pointer;
-  box-shadow:0 10px 24px rgba(0,0,0,0.82);
-  transform:translateY(-22px);
-  transition:transform .2s ease, box-shadow .2s ease;
-}
-.nav-fab:active{
-  transform:translateY(-18px) scale(.97);
-  box-shadow:0 5px 15px rgba(0,0,0,0.9);
-}
+        /* 6. Popups / Dialogs */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .popup-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-/* Ripple feedback */
-.nav-item,
-.nav-fab{
-  position:relative;
-  overflow:hidden;
-}
-.ripple{
-  position:absolute;
-  border-radius:50%;
-  transform:scale(0);
-  background:rgba(255,255,255,0.25);
-  animation:ripple .45s linear;
-  pointer-events:none;
-}
-@keyframes ripple{
-  to{
-    transform:scale(4);
-    opacity:0;
-  }
-}
+        .popup-card {
+            background-color: var(--primary-card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            width: 80%;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .popup-overlay.visible .popup-card {
+            transform: scale(1);
+        }
 
-/* ========== DESKTOP ADAPTATION ========== */
-@media (min-width:768px){
-  body{
-    justify-content:center;
-  }
-  .app-shell{
-    border-radius:30px;
-    overflow:hidden;
-    box-shadow:0 26px 70px rgba(0,0,0,0.85);
-    margin-bottom:72px;
-  }
-  .bottom-nav{
-    background:rgba(3,6,19,0.96);
-  }
-}
-</style>
+        .popup-icon {
+            font-size: 3rem;
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+        .popup-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .popup-message {
+            font-size: 1rem;
+            color: var(--secondary-text);
+            margin-bottom: 25px;
+        }
+        .popup-button {
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .popup-button:active {
+            background-color: var(--dark-accent-color);
+        }
+        #try-again-popup .popup-icon {
+            color: var(--error-color);
+        }
+
+        /* 7. Ad Placeholders */
+        #banner-ad-placeholder {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            z-index: 40;
+        }
+
+        #interstitial-ad-placeholder {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            z-index: 101;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #interstitial-ad-placeholder.hidden {
+            display: none;
+        }
+        #interstitial-ad-placeholder p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        #close-interstitial-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            border: 2px solid white;
+            width: 40px;
+            height: 40px;
+            line-height: 38px;
+            text-align: center;
+            border-radius: 50%;
+        }
+
+    </style>
 </head>
 <body>
 
-<div class="app-shell">
-  <div class="app-status-bar">
-    <!-- fake icons / indicators -->
-    <i class="fa-solid fa-signal" style="margin-right:6px;"></i>
-    <i class="fa-solid fa-wifi" style="margin-right:6px;"></i>
-    <i class="fa-solid fa-battery-full"></i>
-  </div>
-
-  <main class="app-content">
-    <!-- HOME / DASHBOARD SCREEN -->
-    <section class="screen active" data-screen="home">
-      <div class="screen-card">
-        <div class="screen-title">Dashboard</div>
-        <div class="screen-subtitle">Quick overview of all cricket modes and progress.</div>
-
-        <div class="circle-stat">
-          <div class="circle-inner">
-            <span style="font-size:26px;font-weight:700;">82%</span>
-            <span style="font-size:11px;color:rgba(230,240,255,0.7);margin-top:2px;">Overall completion</span>
-          </div>
+    <div id="app-container">
+        <!-- =========== SCREENS =========== -->
+        
+        <!-- Splash Screen -->
+        <div id="splash-screen" class="screen">
+            <div id="splash-logo">DOP Game</div>
+            <div id="splash-tagline">Delete One Part</div>
         </div>
 
-        <div class="pill-row">
-          <div class="pill-chip">Tap Cricket</div>
-          <div class="pill-chip alt">Fast Chase</div>
-          <div class="pill-chip">Hand Cricket</div>
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen hidden">
+            <h1 id="home-title">Ready to Play?</h1>
+            <button id="play-game-btn" class="play-button">PLAY</button>
+            <div id="sound-toggle-btn" class="sound-toggle">
+                <i class="fas fa-volume-up"></i>
+            </div>
         </div>
 
-        <div class="card-grid">
-          <div class="small-card">
-            <strong>Today</strong>
-            <span>Play a quick tap innings and beat your best score.</span>
-          </div>
-          <div class="small-card">
-            <strong>Ongoing League</strong>
-            <span>Complete remaining fixtures to finish the mini season.</span>
-          </div>
-          <div class="small-card">
-            <strong>Penalty Challenge</strong>
-            <span>Score max runs in limited balls without losing wicket.</span>
-          </div>
-          <div class="small-card">
-            <strong>Quiz Bonus</strong>
-            <span>Answer trivia correctly to unlock free batting overs.</span>
-          </div>
-        </div>
-      </div>
-    </section>
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div class="app-bar">
+                <div id="retry-btn" class="app-bar-icon"><i class="fas fa-redo"></i></div>
+                <div class="app-bar-title" id="level-title">Level 1</div>
+                <div id="hint-btn" class="app-bar-icon"><i class="fas fa-lightbulb"></i></div>
+            </div>
 
-    <!-- MODES SCREEN -->
-    <section class="screen" data-screen="modes">
-      <div class="screen-card">
-        <div class="screen-title">Game Modes</div>
-        <div class="screen-subtitle">Choose from multiple cricket styles tuned for quick play.</div>
-
-        <div class="card-grid">
-          <div class="small-card">
-            <strong>Tap Cricket</strong>
-            <span>One-tap timing based batting.</span>
-          </div>
-          <div class="small-card">
-            <strong>Fast Chase</strong>
-            <span>Chase a target in fixed balls.</span>
-          </div>
-          <div class="small-card">
-            <strong>Hand Cricket</strong>
-            <span>Odd–even style duel vs AI.</span>
-          </div>
-          <div class="small-card">
-            <strong>Street Gully</strong>
-            <span>Short matches with random events.</span>
-          </div>
-          <div class="small-card">
-            <strong>Penalty Challenge</strong>
-            <span>Max runs with wickets pressure.</span>
-          </div>
-          <div class="small-card">
-            <strong>Mini League</strong>
-            <span>Short league with points table.</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- STATS SCREEN -->
-    <section class="screen" data-screen="stats">
-      <div class="screen-card">
-        <div class="screen-title">Statistics</div>
-        <div class="screen-subtitle">Track scores, win ratio and highest chases.</div>
-
-        <div class="card-grid">
-          <div class="small-card">
-            <strong>Total Matches</strong>
-            <span>All completed games across every mode.</span>
-          </div>
-          <div class="small-card">
-            <strong>Best Score</strong>
-            <span>Highest run tally in a single innings.</span>
-          </div>
-          <div class="small-card">
-            <strong>Win Rate</strong>
-            <span>Percentage of wins vs losses.</span>
-          </div>
-          <div class="small-card">
-            <strong>Longest Streak</strong>
-            <span>Most consecutive wins recorded.</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SETTINGS SCREEN -->
-    <section class="screen" data-screen="settings">
-      <div class="screen-card">
-        <div class="screen-title">Settings</div>
-        <div class="screen-subtitle">Tweak difficulty, sound, and visual style.</div>
-
-        <div class="pill-row">
-          <div class="pill-chip">Sound On</div>
-          <div class="pill-chip alt">Haptic On</div>
-          <div class="pill-chip">Neon Theme</div>
+            <div id="canvas-container">
+                <canvas id="bottom-canvas" class="game-canvas"></canvas>
+                <canvas id="top-canvas" class="game-canvas"></canvas>
+            </div>
+            
+             <!-- Banner Ad Placeholder -->
+            <div id="banner-ad-placeholder">Banner Ad Placeholder</div>
         </div>
 
-        <div class="small-card" style="margin-bottom:10px;">
-          <strong>Difficulty</strong>
-          <span>Auto scales with player performance for balanced play.</span>
+        <!-- =========== POPUPS =========== -->
+
+        <!-- Level Complete Popup -->
+        <div id="level-complete-popup" class="popup-overlay">
+            <div class="popup-card">
+                <div class="popup-icon"><i class="fas fa-check-circle"></i></div>
+                <h2 class="popup-title">Level Complete!</h2>
+                <p class="popup-message">You are a puzzle master!</p>
+                <button id="next-level-btn" class="popup-button">Next Level</button>
+            </div>
         </div>
 
-        <div class="small-card">
-          <strong>Offline Mode</strong>
-          <span>All modes available without internet; stats saved locally.</span>
+        <!-- Try Again Popup -->
+        <div id="try-again-popup" class="popup-overlay">
+            <div class="popup-card">
+                <div class="popup-icon"><i class="fas fa-times-circle"></i></div>
+                <h2 class="popup-title">Not Quite!</h2>
+                <p class="popup-message">That's not the right part. Try again!</p>
+                <button id="try-again-btn" class="popup-button">Try Again</button>
+            </div>
         </div>
-      </div>
-    </section>
-  </main>
-</div>
 
-<!-- BOTTOM NAVIGATION -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <a href="#" class="nav-item active" data-target="home">
-      <i class="fa-solid fa-house"></i>
-      <span>Home</span>
-    </a>
+         <!-- Hint Popup -->
+         <div id="hint-popup" class="popup-overlay">
+            <div class="popup-card">
+                <div class="popup-icon"><i class="fas fa-lightbulb" style="color: #f1c40f;"></i></div>
+                <h2 class="popup-title">Here's a Hint!</h2>
+                <p class="popup-message" id="hint-text-content">Hint text will appear here.</p>
+                <button id="close-hint-btn" class="popup-button">Got it!</button>
+            </div>
+        </div>
 
-    <a href="#" class="nav-item" data-target="modes">
-      <i class="fa-solid fa-cricket-bat-ball"></i>
-      <span>Modes</span>
-    </a>
+        <!-- =========== ADS =========== -->
 
-    <div class="nav-fab-wrapper">
-      <div class="nav-fab-glow"></div>
-      <button class="nav-fab" id="fabPlay">
-        <i class="fa-solid fa-play"></i>
-      </button>
+        <!-- Interstitial Ad Placeholder -->
+        <div id="interstitial-ad-placeholder" class="hidden">
+            <div id="close-interstitial-btn">&times;</div>
+            <p>Interstitial Ad Placeholder</p>
+            <small>This would be a full-screen ad.</small>
+        </div>
     </div>
 
-    <a href="#" class="nav-item" data-target="stats">
-      <i class="fa-solid fa-chart-line"></i>
-      <span>Stats</span>
-    </a>
+    <script>
+    // --- JAVASCRIPT LOGIC ---
 
-    <a href="#" class="nav-item" data-target="settings">
-      <i class="fa-solid fa-gear"></i>
-      <span>Settings</span>
-    </a>
-  </div>
-</nav>
+    document.addEventListener('DOMContentLoaded', () => {
 
-<script>
-/* ========= NAVIGATION / SCREEN SWITCHING ========= */
-const screens = document.querySelectorAll('.screen');
-const navItems = document.querySelectorAll('.nav-item');
-const fabPlay  = document.getElementById('fabPlay');
+        // --- 1. DOM ELEMENTS & CONSTANTS ---
+        const DOMElements = {
+            splashScreen: document.getElementById('splash-screen'),
+            homeScreen: document.getElementById('home-screen'),
+            gameScreen: document.getElementById('game-screen'),
+            playBtn: document.getElementById('play-game-btn'),
+            soundToggleBtn: document.getElementById('sound-toggle-btn'),
+            levelTitle: document.getElementById('level-title'),
+            retryBtn: document.getElementById('retry-btn'),
+            hintBtn: document.getElementById('hint-btn'),
+            canvasContainer: document.getElementById('canvas-container'),
+            topCanvas: document.getElementById('top-canvas'),
+            bottomCanvas: document.getElementById('bottom-canvas'),
+            levelCompletePopup: document.getElementById('level-complete-popup'),
+            nextLevelBtn: document.getElementById('next-level-btn'),
+            tryAgainPopup: document.getElementById('try-again-popup'),
+            tryAgainBtn: document.getElementById('try-again-btn'),
+            hintPopup: document.getElementById('hint-popup'),
+            hintText: document.getElementById('hint-text-content'),
+            closeHintBtn: document.getElementById('close-hint-btn'),
+            interstitialAd: document.getElementById('interstitial-ad-placeholder'),
+            closeInterstitialBtn: document.getElementById('close-interstitial-btn'),
+        };
 
-function setActiveScreen(name){
-  screens.forEach(s=>{
-    s.classList.toggle('active', s.dataset.screen === name);
-  });
-}
+        const topCtx = DOMElements.topCanvas.getContext('2d');
+        const bottomCtx = DOMElements.bottomCanvas.getContext('2d');
+        
+        const ERASE_RADIUS = 25;
+        const WIN_PERCENTAGE = 0.5; // 50% of the target area must be cleared
+        const INTERSTITIAL_AD_INTERVAL = 3; // Show ad every 3 levels
 
-navItems.forEach(item=>{
-  item.addEventListener('click',e=>{
-    e.preventDefault();
-    const target = item.dataset.target;
-    // activate nav item
-    navItems.forEach(x=>x.classList.remove('active'));
-    item.classList.add('active');
-    // switch screen
-    if(target) setActiveScreen(target);
-    createRipple(e);
-  });
-});
+        // --- 2. GAME STATE ---
+        const gameState = {
+            currentLevel: 0,
+            soundEnabled: true,
+            isDrawing: false,
+            levels: [],
+            vibrationEnabled: 'vibrate' in navigator,
+        };
 
-// FAB: quick jump to “modes” as example
-fabPlay.addEventListener('click',e=>{
-  createRipple(e);
-  setActiveScreen('modes');
-  navItems.forEach(x=>{
-    x.classList.toggle('active', x.dataset.target === 'modes');
-  });
-});
+        // --- 3. LEVEL DATA ---
+        // IMPORTANT: In a real game, these would be image URLs.
+        // For this offline, single-file demo, we will generate images dynamically on the canvas.
+        // This demonstrates the core logic without needing external files.
+        const levels = [
+            {
+                id: 1,
+                hint: "A house needs light to feel like a home.",
+                targetArea: { x: 180, y: 150, width: 40, height: 40 }, // Approx area of the window
+                draw: (puzzleCtx, solvedCtx) => {
+                    // Solved state (bottom canvas)
+                    solvedCtx.fillStyle = '#87CEEB'; // Sky
+                    solvedCtx.fillRect(0, 0, 400, 400);
+                    solvedCtx.fillStyle = '#2ecc71'; // Ground
+                    solvedCtx.fillRect(0, 300, 400, 100);
+                    solvedCtx.fillStyle = '#e74c3c'; // House
+                    solvedCtx.fillRect(100, 150, 200, 150);
+                    solvedCtx.beginPath(); // Roof
+                    solvedCtx.moveTo(80, 150);
+                    solvedCtx.lineTo(320, 150);
+                    solvedCtx.lineTo(200, 80);
+                    solvedCtx.closePath();
+                    solvedCtx.fillStyle = '#8e44ad';
+                    solvedCtx.fill();
+                    solvedCtx.fillStyle = 'yellow'; // Light in window
+                    solvedCtx.fillRect(180, 180, 40, 40);
 
-/* ========= RIPPLE EFFECT ========= */
-function createRipple(e){
-  const target = e.currentTarget;
-  const rect = target.getBoundingClientRect();
-  const ripple = document.createElement('span');
-  const size = Math.max(rect.width, rect.height);
-  const x = e.clientX - rect.left - size/2;
-  const y = e.clientY - rect.top  - size/2;
+                    // Puzzle state (top canvas)
+                    puzzleCtx.drawImage(solvedCtx.canvas, 0, 0);
+                    puzzleCtx.fillStyle = '#34495e'; // Dark window
+                    puzzleCtx.fillRect(180, 180, 40, 40);
+                }
+            },
+            {
+                id: 2,
+                hint: "What makes a smiley face happy?",
+                targetArea: { x: 150, y: 220, width: 100, height: 40 }, // Area for the smile
+                draw: (puzzleCtx, solvedCtx) => {
+                    // Solved state
+                    solvedCtx.fillStyle = 'yellow';
+                    solvedCtx.beginPath();
+                    solvedCtx.arc(200, 200, 150, 0, Math.PI * 2);
+                    solvedCtx.fill();
+                    solvedCtx.fillStyle = 'black';
+                    solvedCtx.beginPath(); // Eyes
+                    solvedCtx.arc(150, 150, 20, 0, Math.PI * 2);
+                    solvedCtx.arc(250, 150, 20, 0, Math.PI * 2);
+                    solvedCtx.fill();
+                    solvedCtx.beginPath(); // Smile
+                    solvedCtx.arc(200, 220, 80, 0, Math.PI, false);
+                    solvedCtx.lineWidth = 10;
+                    solvedCtx.stroke();
+                    
+                    // Puzzle state
+                    puzzleCtx.drawImage(solvedCtx.canvas, 0, 0);
+                    puzzleCtx.beginPath(); // Remove smile
+                    puzzleCtx.arc(200, 220, 85, 0, Math.PI, false);
+                    puzzleCtx.fillStyle = 'yellow';
+                    puzzleCtx.fill();
+                }
+            },
+             {
+                id: 3,
+                hint: "This car can't go anywhere without its wheels.",
+                targetArea: { x: 260, y: 250, width: 70, height: 70 }, // Missing wheel
+                draw: (puzzleCtx, solvedCtx) => {
+                    // Solved state
+                    solvedCtx.fillStyle = '#87CEEB'; // Sky
+                    solvedCtx.fillRect(0, 0, 400, 400);
+                    solvedCtx.fillStyle = '#7f8c8d'; // Road
+                    solvedCtx.fillRect(0, 300, 400, 100);
+                    solvedCtx.fillStyle = '#3498db'; // Car body
+                    solvedCtx.fillRect(100, 200, 200, 50);
+                    solvedCtx.fillRect(150, 150, 100, 50);
+                    solvedCtx.fillStyle = 'black'; // Wheels
+                    solvedCtx.beginPath();
+                    solvedCtx.arc(140, 275, 25, 0, 2 * Math.PI);
+                    solvedCtx.arc(280, 275, 25, 0, 2 * Math.PI);
+                    solvedCtx.fill();
+                    
+                    // Puzzle state
+                    puzzleCtx.drawImage(solvedCtx.canvas, 0, 0);
+                    puzzleCtx.fillStyle = '#7f8c8d'; // Cover missing wheel with road color
+                    puzzleCtx.beginPath();
+                    puzzleCtx.arc(280, 275, 30, 0, 2 * Math.PI);
+                    puzzleCtx.fill();
+                }
+            },
+        ];
+        gameState.levels = levels;
 
-  ripple.className = 'ripple';
-  ripple.style.width  = size + 'px';
-  ripple.style.height = size + 'px';
-  ripple.style.left   = x + 'px';
-  ripple.style.top    = y + 'px';
 
-  target.appendChild(ripple);
-  setTimeout(()=>ripple.remove(),450);
-}
+        // --- 4. CORE GAME LOGIC ---
 
-/* ========= SIMPLE THEME HOOK EXAMPLE ========= */
-/* You can later connect this to a settings toggle */
-function toggleNeonTheme(on){
-  document.body.style.background = on
-    ? 'radial-gradient(circle at 0% 0%,#ff4b72 0,#050816 40%,#140b3a 75%,#03d5ff 100%)'
-    : '#050816';
-}
-</script>
+        function loadLevel(levelIndex) {
+            if (levelIndex >= gameState.levels.length) {
+                // Game complete logic (e.g., show a final screen or loop)
+                alert("Congratulations! You've completed all levels!");
+                levelIndex = 0; // Loop back to the first level
+            }
+            gameState.currentLevel = levelIndex;
+            localStorage.setItem('dop_currentLevel', gameState.currentLevel);
+
+            const level = gameState.levels[levelIndex];
+            DOMElements.levelTitle.textContent = `Level ${level.id}`;
+
+            // Set canvas size based on container
+            const canvasSize = DOMElements.canvasContainer.clientWidth;
+            DOMElements.topCanvas.width = DOMElements.topCanvas.height = canvasSize;
+            DOMElements.bottomCanvas.width = DOMElements.bottomCanvas.height = canvasSize;
+            
+            // The drawing functions assume a 400x400 canvas. We scale the context to match.
+            const scale = canvasSize / 400;
+            topCtx.setTransform(scale, 0, 0, scale, 0, 0);
+            bottomCtx.setTransform(scale, 0, 0, scale, 0, 0);
+
+            // Clear canvases
+            topCtx.clearRect(0, 0, 400, 400);
+            bottomCtx.clearRect(0, 0, 400, 400);
+
+            // Draw the level
+            level.draw(topCtx, bottomCtx);
+        }
+
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+            const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function startDrawing(e) {
+            gameState.isDrawing = true;
+            draw(e); // Draw a single point on click/tap
+        }
+
+        function stopDrawing() {
+            if (!gameState.isDrawing) return;
+            gameState.isDrawing = false;
+            topCtx.beginPath(); // End the current path
+            checkWinCondition();
+        }
+
+        function draw(e) {
+            if (!gameState.isDrawing) return;
+            e.preventDefault();
+
+            const pos = getMousePos(DOMElements.topCanvas, e);
+            const canvasScale = DOMElements.topCanvas.width / 400; // Get the scale factor
+
+            // Use globalCompositeOperation to "erase"
+            topCtx.globalCompositeOperation = 'destination-out';
+            topCtx.beginPath();
+            topCtx.arc(pos.x / canvasScale, pos.y / canvasScale, ERASE_RADIUS, 0, Math.PI * 2, false);
+            topCtx.fill();
+        }
+
+        function checkWinCondition() {
+            const level = gameState.levels[gameState.currentLevel];
+            const target = level.targetArea;
+            
+            // Get the pixel data from the erased canvas within the target area
+            // We must account for the canvas scaling
+            const canvasScale = DOMElements.topCanvas.width / 400;
+            const scaledTarget = {
+                x: target.x * canvasScale,
+                y: target.y * canvasScale,
+                width: target.width * canvasScale,
+                height: target.height * canvasScale,
+            };
+
+            const imageData = topCtx.getImageData(scaledTarget.x, scaledTarget.y, scaledTarget.width, scaledTarget.height);
+            const pixelData = imageData.data;
+            
+            let transparentPixels = 0;
+            // Loop through the pixels (RGBA, so 4 values per pixel)
+            for (let i = 3; i < pixelData.length; i += 4) {
+                if (pixelData[i] === 0) { // Alpha channel is 0 (fully transparent)
+                    transparentPixels++;
+                }
+            }
+
+            const totalPixels = scaledTarget.width * scaledTarget.height;
+            const transparentPercentage = transparentPixels / totalPixels;
+
+            if (transparentPercentage >= WIN_PERCENTAGE) {
+                handleWin();
+            } else {
+                // Optional: Implement a "wrong erase" check here if needed
+                // For this version, we only check for a win, not a loss on every stroke.
+            }
+        }
+        
+        function handleWin() {
+            playSound('win');
+            vibrate(100);
+            DOMElements.levelCompletePopup.classList.add('visible');
+        }
+
+        function handleWrongErase() {
+            playSound('lose');
+            vibrate([50, 50, 50]);
+            DOMElements.canvasContainer.classList.add('shake');
+            DOMElements.tryAgainPopup.classList.add('visible');
+            
+            setTimeout(() => {
+                DOMElements.canvasContainer.classList.remove('shake');
+            }, 500);
+        }
+
+
+        // --- 5. UI & EVENT HANDLERS ---
+        
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function setupEventListeners() {
+            DOMElements.playBtn.addEventListener('click', () => {
+                showScreen('game-screen');
+                loadLevel(gameState.currentLevel);
+            });
+
+            // Canvas listeners
+            DOMElements.topCanvas.addEventListener('mousedown', startDrawing);
+            DOMElements.topCanvas.addEventListener('mouseup', stopDrawing);
+            DOMElements.topCanvas.addEventListener('mousemove', draw);
+            DOMElements.topCanvas.addEventListener('mouseleave', stopDrawing);
+
+            DOMElements.topCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+            DOMElements.topCanvas.addEventListener('touchend', stopDrawing);
+            DOMElements.topCanvas.addEventListener('touchmove', draw, { passive: false });
+            DOMElements.topCanvas.addEventListener('touchcancel', stopDrawing);
+
+            // Popup buttons
+            DOMElements.nextLevelBtn.addEventListener('click', () => {
+                DOMElements.levelCompletePopup.classList.remove('visible');
+                const nextLevelIndex = gameState.currentLevel + 1;
+
+                // Check for interstitial ad
+                if (nextLevelIndex % INTERSTITIAL_AD_INTERVAL === 0 && nextLevelIndex > 0) {
+                    showInterstitialAd(() => loadLevel(nextLevelIndex));
+                } else {
+                    loadLevel(nextLevelIndex);
+                }
+            });
+            
+            DOMElements.tryAgainBtn.addEventListener('click', () => {
+                DOMElements.tryAgainPopup.classList.remove('visible');
+                loadLevel(gameState.currentLevel); // Reload current level
+            });
+            
+            DOMElements.retryBtn.addEventListener('click', () => {
+                 loadLevel(gameState.currentLevel);
+            });
+
+            // Hint system
+            DOMElements.hintBtn.addEventListener('click', () => {
+                const hint = gameState.levels[gameState.currentLevel].hint;
+                DOMElements.hintText.textContent = hint;
+                DOMElements.hintPopup.classList.add('visible');
+            });
+
+            DOMElements.closeHintBtn.addEventListener('click', () => {
+                DOMElements.hintPopup.classList.remove('visible');
+            });
+            
+            // Sound toggle
+            DOMElements.soundToggleBtn.addEventListener('click', toggleSound);
+
+            // Ads
+            DOMElements.closeInterstitialBtn.addEventListener('click', () => {
+                DOMElements.interstitialAd.classList.add('hidden');
+                if (window.interstitialAdCallback) {
+                    window.interstitialAdCallback();
+                    window.interstitialAdCallback = null;
+                }
+            });
+        }
+// --- 6. SOUND & VIBRATION ---
+
+        // As we can't embed audio in a single HTML file without base64 encoding (which makes it huge),
+        // we'll simulate sounds with the Web Audio API. This creates tiny, synthetic sounds.
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.error("Web Audio API is not supported in this browser.");
+                }
+            }
+        }
+
+        function playSound(type) {
+            if (!gameState.soundEnabled || !audioCtx) return;
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+
+            switch (type) {
+                case 'win':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+                    oscillator.frequency.linearRampToValueAtTime(1046.50, audioCtx.currentTime + 0.2); // C6
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+                    break;
+                case 'lose':
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+                    oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+                    break;
+                case 'click':
+                     oscillator.type = 'sine';
+                     oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                     gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
+                     gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+                     break;
+            }
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = DOMElements.soundToggleBtn.querySelector('i');
+            if (gameState.soundEnabled) {
+                icon.classList.remove('fa-volume-mute');
+                icon.classList.add('fa-volume-up');
+                initAudio(); // Initialize audio context on first enable
+                playSound('click');
+            } else {
+                icon.classList.remove('fa-volume-up');
+                icon.classList.add('fa-volume-mute');
+            }
+        }
+        
+        function vibrate(pattern) {
+            if (gameState.vibrationEnabled) {
+                navigator.vibrate(pattern);
+            }
+        }
+
+        // --- 7. MONETIZATION (PLACEHOLDERS) ---
+
+        function showInterstitialAd(callback) {
+            DOMElements.interstitialAd.classList.remove('hidden');
+            // In a real app, you would listen for an ad SDK callback.
+            // Here, we'll just wait for the user to close it.
+            window.interstitialAdCallback = callback;
+        }
+
+
+        // --- 8. INITIALIZATION ---
+
+        function init() {
+            // Add a global click listener for button sound effects
+             document.body.addEventListener('click', (e) => {
+                if (e.target.matches('button, .app-bar-icon')) {
+                    playSound('click');
+                    vibrate(20);
+                }
+            }, true);
+
+            setupEventListeners();
+            
+            // Load progress
+            const savedLevel = localStorage.getItem('dop_currentLevel');
+            if (savedLevel) {
+                gameState.currentLevel = parseInt(savedLevel, 10);
+            }
+
+            // Simulate app loading
+            setTimeout(() => {
+                DOMElements.splashScreen.classList.add('hidden');
+                showScreen('home-screen');
+            }, 1500);
+        }
+
+        init(); // Start the application
+    });
+
+    </script>
 </body>
-</html>
+</html>```
