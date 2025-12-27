@@ -2,31 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Delete One Part</title>
+    <title>DOP: Pro Edition</title>
     
-    <!-- FONT AWESOME CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- CSS STYLES --- */
+        /* --- CSS STYLES (Professional Overhaul) --- */
 
-        /* 1. Global & Root Styles */
+        /* 1. Font Embedding */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        /* 2. Global & Root Styles */
         :root {
-            --primary-bg: #f4f4f9;
-            --primary-card-bg: #ffffff;
-            --primary-text: #2c3e50;
-            --secondary-text: #7f8c8d;
-            --accent-color: #3498db;
-            --dark-accent-color: #2980b9;
-            --success-color: #2ecc71;
-            --error-color: #e74c3c;
-            --toolbar-bg: #ffffff;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --splash-bg-start: #3a7bd5;
-            --splash-bg-end: #00d2ff;
+            --bg-main: #1e1e2f;
+            --bg-card: #27293d;
+            --bg-glass: rgba(39, 41, 61, 0.5);
+            --primary: #8a2be2; /* BlueViolet */
+            --primary-light: #9370db; /* MediumPurple */
+            --accent: #00f7ff; /* Bright Cyan */
+            --text-light: #ffffff;
+            --text-mid: #a9a9d4;
+            --text-dark: #1e1e2f;
+            --success: #20e3b2;
+            --error: #ff4757;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --font-family: 'Poppins', sans-serif;
         }
 
         * {
@@ -40,10 +43,11 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--primary-bg);
-            color: var(--primary-text);
+            font-family: var(--font-family);
+            background-color: #000; /* Fallback for body */
+            color: var(--text-light);
             -webkit-user-select: none;
+            -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
         }
@@ -52,14 +56,14 @@
             position: relative;
             width: 100%;
             height: 100%;
-            max-width: 480px; /* Simulates mobile device width */
+            max-width: 480px;
             margin: 0 auto;
-            background-color: var(--primary-card-bg);
-            box-shadow: 0 0 20px var(--shadow-color);
+            background: var(--bg-main);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
             overflow: hidden;
         }
 
-        /* 2. Screen Management */
+        /* 3. Screen Manager & Transitions */
         .screen {
             position: absolute;
             top: 0;
@@ -70,117 +74,172 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            opacity: 1;
-            transform: scale(1);
+            padding: 20px;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             backface-visibility: hidden;
         }
 
         .screen.hidden {
             opacity: 0;
-            transform: scale(1.05);
+            transform: scale(0.95);
             pointer-events: none;
         }
+        
+        .screen.active {
+            opacity: 1;
+            transform: scale(1);
+        }
 
-        /* 3. Splash Screen */
+        /* 4. Splash Screen */
         #splash-screen {
-            background: linear-gradient(45deg, var(--splash-bg-start), var(--splash-bg-end));
-            color: white;
+            background: linear-gradient(45deg, #12122c, #3c1a59);
             z-index: 100;
         }
-        #splash-logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        #splash-tagline {
-            font-size: 1rem;
-            opacity: 0.8;
+        
+        .splash-logo {
+            text-align: center;
+            animation: fadeInScale 1s ease-out;
         }
 
-        /* 4. Home Screen */
-        #home-screen {
-            justify-content: center;
-            padding: 20px;
-        }
-        #home-title {
-            font-size: 2.2rem;
+        .splash-logo h1 {
+            font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 40px;
+            color: var(--text-light);
+            text-shadow: 0 0 15px var(--accent);
         }
-        .play-button {
-            padding: 15px 60px;
-            font-size: 1.5rem;
+
+        .splash-logo p {
+            font-size: 1rem;
+            color: var(--text-mid);
+            margin-top: 5px;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--bg-card);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            bottom: 50px;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 5. Home Screen */
+        #home-screen {
+             background: var(--bg-main);
+             justify-content: space-around;
+        }
+        
+        .home-header {
+            text-align: center;
+        }
+
+        .home-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+
+        .home-header p {
+            color: var(--text-mid);
+            font-size: 1.1rem;
+        }
+
+        #play-game-btn {
+            padding: 18px 70px;
+            font-size: 1.6rem;
             font-weight: 600;
-            color: white;
-            background-color: var(--accent-color);
+            color: var(--text-dark);
+            background: linear-gradient(45deg, var(--accent), var(--success));
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
-            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 5px 25px rgba(0, 247, 255, 0.3);
+            transition: transform 0.2s ease-out, box-shadow 0.2s;
         }
-        .play-button:active {
-            background-color: var(--dark-accent-color);
+        #play-game-btn:active {
             transform: scale(0.95);
+            box-shadow: 0 2px 15px rgba(0, 247, 255, 0.2);
         }
-        .sound-toggle {
+        
+        #sound-toggle-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 20px;
+            right: 20px;
             font-size: 1.5rem;
-            width: 50px;
-            height: 50px;
-            line-height: 50px;
+            width: 55px;
+            height: 55px;
+            line-height: 55px;
             text-align: center;
-            background: var(--primary-bg);
-            color: var(--secondary-text);
+            background: var(--bg-card);
+            color: var(--text-mid);
             border-radius: 50%;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        #sound-toggle-btn:active{
+            transform: scale(0.9);
+            color: var(--accent);
         }
 
-        /* 5. Game Screen */
+        /* 6. Game Screen */
         #game-screen {
             justify-content: flex-start;
-            background-color: var(--primary-bg);
         }
 
-        /* App Bar (Toolbar) */
         .app-bar {
             width: 100%;
             height: 60px;
-            background-color: var(--toolbar-bg);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 10px;
-            box-shadow: 0 2px 4px var(--shadow-color);
+            padding: 0 15px;
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
         .app-bar-title {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 600;
+            color: var(--text-light);
         }
         .app-bar-icon {
             font-size: 1.4rem;
-            width: 44px;
-            height: 44px;
-            line-height: 44px;
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
             text-align: center;
-            color: var(--primary-text);
+            color: var(--text-mid);
+            background: var(--bg-card);
+            border-radius: 50%;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .app-bar-icon:active {
+            transform: scale(0.92);
+            color: var(--accent);
         }
 
-        /* Canvas Area */
         #canvas-container {
             position: relative;
-            width: 90%;
-            margin: 20px 0;
-            border-radius: 16px;
+            width: 95%;
+            margin-top: 20px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 8px 25px var(--shadow-color);
-            aspect-ratio: 1 / 1; /* Make it a square, adjustable */
-            touch-action: none; /* Prevents scrolling while drawing */
+            box-shadow: 0 10px 30px var(--shadow-color);
+            aspect-ratio: 1 / 1;
+            touch-action: none;
+            background: white; /* Fallback */
         }
         .game-canvas {
             position: absolute;
@@ -189,27 +248,26 @@
             width: 100%;
             height: 100%;
         }
-        #bottom-canvas { z-index: 1; }
-        #top-canvas { z-index: 2; cursor: crosshair; }
+        #top-canvas { cursor: pointer; }
 
-        /* Shake Animation */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
+            10%, 50%, 90% { transform: translateX(-8px); }
+            30%, 70% { transform: translateX(8px); }
         }
         .shake {
-            animation: shake 0.5s ease-in-out;
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
         }
 
-        /* 6. Popups / Dialogs */
+        /* 7. Popups / Dialogs */
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -224,82 +282,93 @@
         }
 
         .popup-card {
-            background-color: var(--primary-card-bg);
-            padding: 25px;
-            border-radius: 16px;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
             text-align: center;
-            width: 80%;
-            max-width: 320px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            width: 85%;
+            max-width: 340px;
+            box-shadow: 0 10px 40px var(--shadow-color);
+            border: 1px solid var(--bg-glass);
+            transform: scale(0.7) translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.3s ease;
         }
         .popup-overlay.visible .popup-card {
-            transform: scale(1);
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
 
         .popup-icon {
-            font-size: 3rem;
-            color: var(--success-color);
+            font-size: 4rem;
             margin-bottom: 15px;
+            animation: popIn 0.5s 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28) backwards;
         }
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        #level-complete-popup .popup-icon { color: var(--success); }
+        #try-again-popup .popup-icon { color: var(--error); }
+        #hint-popup .popup-icon { color: var(--accent); }
+        
         .popup-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 10px;
         }
         .popup-message {
             font-size: 1rem;
-            color: var(--secondary-text);
-            margin-bottom: 25px;
+            color: var(--text-mid);
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
         .popup-button {
-            padding: 12px 40px;
+            padding: 15px 45px;
             font-size: 1.1rem;
             font-weight: 600;
-            color: white;
-            background-color: var(--accent-color);
+            color: var(--text-dark);
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        #next-level-btn { background: linear-gradient(45deg, var(--accent), var(--success)); box-shadow: 0 4px 20px rgba(32, 227, 178, 0.3); }
+        #try-again-btn { background: linear-gradient(45deg, #ff7e5f, #feb47b); box-shadow: 0 4px 20px rgba(255, 126, 95, 0.3); }
+        #close-hint-btn { background: linear-gradient(45deg, var(--primary-light), var(--primary)); box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3); color: var(--text-light); }
+        
         .popup-button:active {
-            background-color: var(--dark-accent-color);
+            transform: scale(0.95);
+            box-shadow: none;
         }
-        #try-again-popup .popup-icon {
-            color: var(--error-color);
-        }
-
-        /* 7. Ad Placeholders */
-        #banner-ad-placeholder {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        
+        /* 8. Ad Placeholders */
+        .ad-placeholder {
             width: 100%;
-            height: 50px;
-            background-color: #2c3e50;
-            color: white;
+            background-color: #111;
+            color: #555;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        #banner-ad-placeholder {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 50px;
             z-index: 40;
         }
 
         #interstitial-ad-placeholder {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
-            color: white;
             z-index: 101;
-            display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            color: white;
+            transition: opacity 0.3s;
         }
         #interstitial-ad-placeholder.hidden {
             display: none;
@@ -309,17 +378,11 @@
             margin-bottom: 20px;
         }
         #close-interstitial-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            cursor: pointer;
-            border: 2px solid white;
-            width: 40px;
-            height: 40px;
-            line-height: 38px;
-            text-align: center;
-            border-radius: 50%;
+            position: absolute; top: 20px; right: 20px;
+            font-size: 2rem; cursor: pointer;
+            width: 44px; height: 44px; line-height: 40px;
+            text-align: center; border-radius: 50%;
+            background: rgba(255,255,255,0.1);
         }
 
     </style>
@@ -328,23 +391,25 @@
 
     <div id="app-container">
         <!-- =========== SCREENS =========== -->
-        
-        <!-- Splash Screen -->
-        <div id="splash-screen" class="screen">
-            <div id="splash-logo">DOP Game</div>
-            <div id="splash-tagline">Delete One Part</div>
+        <div id="splash-screen" class="screen active">
+            <div class="splash-logo">
+                <h1>DOP: Pro</h1>
+                <p>Erase to Solve</p>
+            </div>
+            <div class="loader"></div>
         </div>
 
-        <!-- Home Screen -->
         <div id="home-screen" class="screen hidden">
-            <h1 id="home-title">Ready to Play?</h1>
-            <button id="play-game-btn" class="play-button">PLAY</button>
-            <div id="sound-toggle-btn" class="sound-toggle">
+             <div class="home-header">
+                <h1>Select Level</h1>
+                <p>Your current progress is saved</p>
+            </div>
+            <button id="play-game-btn">PLAY</button>
+            <div id="sound-toggle-btn" class="app-bar-icon">
                 <i class="fas fa-volume-up"></i>
             </div>
         </div>
 
-        <!-- Game Screen -->
         <div id="game-screen" class="screen hidden">
             <div class="app-bar">
                 <div id="retry-btn" class="app-bar-icon"><i class="fas fa-redo"></i></div>
@@ -357,493 +422,567 @@
                 <canvas id="top-canvas" class="game-canvas"></canvas>
             </div>
             
-             <!-- Banner Ad Placeholder -->
-            <div id="banner-ad-placeholder">Banner Ad Placeholder</div>
+            <div id="banner-ad-placeholder" class="ad-placeholder">Banner Ad</div>
         </div>
 
         <!-- =========== POPUPS =========== -->
-
-        <!-- Level Complete Popup -->
         <div id="level-complete-popup" class="popup-overlay">
             <div class="popup-card">
                 <div class="popup-icon"><i class="fas fa-check-circle"></i></div>
-                <h2 class="popup-title">Level Complete!</h2>
-                <p class="popup-message">You are a puzzle master!</p>
+                <h2 class="popup-title">Awesome!</h2>
+                <p class="popup-message">You've solved the puzzle. Ready for the next challenge?</p>
                 <button id="next-level-btn" class="popup-button">Next Level</button>
             </div>
         </div>
 
-        <!-- Try Again Popup -->
         <div id="try-again-popup" class="popup-overlay">
             <div class="popup-card">
                 <div class="popup-icon"><i class="fas fa-times-circle"></i></div>
-                <h2 class="popup-title">Not Quite!</h2>
-                <p class="popup-message">That's not the right part. Try again!</p>
+                <h2 class="popup-title">Not Quite...</h2>
+                <p class="popup-message">That wasn't the right part. Give it another shot!</p>
                 <button id="try-again-btn" class="popup-button">Try Again</button>
             </div>
         </div>
 
-         <!-- Hint Popup -->
          <div id="hint-popup" class="popup-overlay">
             <div class="popup-card">
-                <div class="popup-icon"><i class="fas fa-lightbulb" style="color: #f1c40f;"></i></div>
-                <h2 class="popup-title">Here's a Hint!</h2>
-                <p class="popup-message" id="hint-text-content">Hint text will appear here.</p>
-                <button id="close-hint-btn" class="popup-button">Got it!</button>
+                <div class="popup-icon"><i class="fas fa-lightbulb"></i></div>
+                <h2 class="popup-title">Here's a Hint</h2>
+                <p class="popup-message" id="hint-text-content">The hint will appear here.</p>
+                <button id="close-hint-btn" class="popup-button">Got It</button>
             </div>
         </div>
 
         <!-- =========== ADS =========== -->
-
-        <!-- Interstitial Ad Placeholder -->
-        <div id="interstitial-ad-placeholder" class="hidden">
+        <div id="interstitial-ad-placeholder" class="ad-placeholder hidden">
             <div id="close-interstitial-btn">&times;</div>
-            <p>Interstitial Ad Placeholder</p>
-            <small>This would be a full-screen ad.</small>
+            <p>Interstitial Ad</p>
         </div>
     </div>
+    
+    <!-- =========== AUDIO ELEMENTS =========== -->
+    <audio id="bg-music" loop></audio>
+    <audio id="sfx-win"></audio>
+    <audio id="sfx-click"></audio>
+    <audio id="sfx-erase"></audio>
 
     <script>
-    // --- JAVASCRIPT LOGIC ---
+    // --- JAVASCRIPT LOGIC (Professional Overhaul) ---
 
     document.addEventListener('DOMContentLoaded', () => {
 
-        // --- 1. DOM ELEMENTS & CONSTANTS ---
-        const DOMElements = {
-            splashScreen: document.getElementById('splash-screen'),
-            homeScreen: document.getElementById('home-screen'),
-            gameScreen: document.getElementById('game-screen'),
-            playBtn: document.getElementById('play-game-btn'),
-            soundToggleBtn: document.getElementById('sound-toggle-btn'),
-            levelTitle: document.getElementById('level-title'),
-            retryBtn: document.getElementById('retry-btn'),
-            hintBtn: document.getElementById('hint-btn'),
-            canvasContainer: document.getElementById('canvas-container'),
-            topCanvas: document.getElementById('top-canvas'),
-            bottomCanvas: document.getElementById('bottom-canvas'),
-            levelCompletePopup: document.getElementById('level-complete-popup'),
-            nextLevelBtn: document.getElementById('next-level-btn'),
-            tryAgainPopup: document.getElementById('try-again-popup'),
-            tryAgainBtn: document.getElementById('try-again-btn'),
-            hintPopup: document.getElementById('hint-popup'),
-            hintText: document.getElementById('hint-text-content'),
-            closeHintBtn: document.getElementById('close-hint-btn'),
-            interstitialAd: document.getElementById('interstitial-ad-placeholder'),
-            closeInterstitialBtn: document.getElementById('close-interstitial-btn'),
+        // --- 1. CONFIG & CONSTANTS ---
+        const CONFIG = {
+            ERASE_RADIUS: 30,
+            WIN_PERCENTAGE: 0.6, // 60% of target area must be cleared
+            INTERSTITIAL_AD_INTERVAL: 4, // Show ad every 4 levels
+            TOTAL_LEVELS: 10,
+            CANVAS_LOGICAL_WIDTH: 500, // All level drawings are based on this dimension
         };
 
-        const topCtx = DOMElements.topCanvas.getContext('2d');
-        const bottomCtx = DOMElements.bottomCanvas.getContext('2d');
-        
-        const ERASE_RADIUS = 25;
-        const WIN_PERCENTAGE = 0.5; // 50% of the target area must be cleared
-        const INTERSTITIAL_AD_INTERVAL = 3; // Show ad every 3 levels
+        // --- 2. BASE64 ENCODED AUDIO DATA ---
+        // To keep this file offline, audio is embedded.
+        // Files are royalty-free, compressed to be as small as possible.
+        const AUDIO_DATA = {
+            MUSIC: 'data:audio/mpeg;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=', // Placeholder: Tiny silent WAV
+            WIN: 'data:audio/mpeg;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',   // Placeholder: Tiny silent WAV
+            CLICK: 'data:audio/mpeg;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',// Placeholder: Tiny silent WAV
+            ERASE: 'data:audio/mpeg;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',// Placeholder: Tiny silent WAV
+        };
+        // NOTE: Real Base64 strings are extremely long and would be placed here.
+        // I will use placeholder silent audio to demonstrate functionality without making the code unreadably long.
+        // In a final product, these strings would contain the actual audio data.
 
-        // --- 2. GAME STATE ---
+        // --- 3. DOM ELEMENTS ---
+        const DOMElements = {
+            appContainer: document.getElementById('app-container'),
+            screens: {
+                splash: document.getElementById('splash-screen'),
+                home: document.getElementById('home-screen'),
+                game: document.getElementById('game-screen'),
+            },
+            buttons: {
+                play: document.getElementById('play-game-btn'),
+                soundToggle: document.getElementById('sound-toggle-btn'),
+                retry: document.getElementById('retry-btn'),
+                hint: document.getElementById('hint-btn'),
+                nextLevel: document.getElementById('next-level-btn'),
+                tryAgain: document.getElementById('try-again-btn'),
+                closeHint: document.getElementById('close-hint-btn'),
+                closeInterstitial: document.getElementById('close-interstitial-btn'),
+            },
+            popups: {
+                levelComplete: document.getElementById('level-complete-popup'),
+                tryAgain: document.getElementById('try-again-popup'),
+                hint: document.getElementById('hint-popup'),
+            },
+            game: {
+                levelTitle: document.getElementById('level-title'),
+                canvasContainer: document.getElementById('canvas-container'),
+                topCanvas: document.getElementById('top-canvas'),
+                bottomCanvas: document.getElementById('bottom-canvas'),
+            },
+            ads: {
+                interstitial: document.getElementById('interstitial-ad-placeholder'),
+            },
+            audio: {
+                music: document.getElementById('bg-music'),
+                win: document.getElementById('sfx-win'),
+                click: document.getElementById('sfx-click'),
+                erase: document.getElementById('sfx-erase'),
+            }
+        };
+
+        // --- 4. GAME STATE ---
         const gameState = {
             currentLevel: 0,
             soundEnabled: true,
             isDrawing: false,
-            levels: [],
             vibrationEnabled: 'vibrate' in navigator,
+            assetsLoaded: false,
         };
 
-        // --- 3. LEVEL DATA ---
-        // IMPORTANT: In a real game, these would be image URLs.
-        // For this offline, single-file demo, we will generate images dynamically on the canvas.
-        // This demonstrates the core logic without needing external files.
-        const levels = [
+        // --- 5. LEVEL DATA ---
+        // More professional levels with more complex drawing logic.
+        // All coordinates are relative to a 500x500 logical canvas.
+        const levelData = [
             {
                 id: 1,
-                hint: "A house needs light to feel like a home.",
-                targetArea: { x: 180, y: 150, width: 40, height: 40 }, // Approx area of the window
-                draw: (puzzleCtx, solvedCtx) => {
-                    // Solved state (bottom canvas)
-                    solvedCtx.fillStyle = '#87CEEB'; // Sky
-                    solvedCtx.fillRect(0, 0, 400, 400);
-                    solvedCtx.fillStyle = '#2ecc71'; // Ground
-                    solvedCtx.fillRect(0, 300, 400, 100);
-                    solvedCtx.fillStyle = '#e74c3c'; // House
-                    solvedCtx.fillRect(100, 150, 200, 150);
-                    solvedCtx.beginPath(); // Roof
-                    solvedCtx.moveTo(80, 150);
-                    solvedCtx.lineTo(320, 150);
-                    solvedCtx.lineTo(200, 80);
-                    solvedCtx.closePath();
-                    solvedCtx.fillStyle = '#8e44ad';
-                    solvedCtx.fill();
-                    solvedCtx.fillStyle = 'yellow'; // Light in window
-                    solvedCtx.fillRect(180, 180, 40, 40);
+                hint: "The moon should be full tonight.",
+                targetArea: { x: 350, y: 50, width: 100, height: 100 },
+                draw: (pCtx, sCtx) => { // puzzleCtx, solvedCtx
+                    // Solved State (Bottom)
+                    sCtx.fillStyle = '#191970'; sCtx.fillRect(0,0,500,500); // Night Sky
+                    sCtx.fillStyle = 'white'; // Stars
+                    for(let i=0; i<100; i++) sCtx.fillRect(Math.random()*500, Math.random()*500, 2, 2);
+                    sCtx.fillStyle = '#f0e68c'; // Full Moon
+                    sCtx.beginPath(); sCtx.arc(400, 100, 50, 0, Math.PI*2); sCtx.fill();
+                    sCtx.fillStyle = '#228b22'; sCtx.fillRect(0,400,500,100); // Ground
 
-                    // Puzzle state (top canvas)
-                    puzzleCtx.drawImage(solvedCtx.canvas, 0, 0);
-                    puzzleCtx.fillStyle = '#34495e'; // Dark window
-                    puzzleCtx.fillRect(180, 180, 40, 40);
+                    // Puzzle State (Top)
+                    pCtx.drawImage(sCtx.canvas, 0, 0);
+                    pCtx.fillStyle = '#191970'; // Cover part of moon to make it crescent
+                    pCtx.beginPath(); pCtx.arc(370, 80, 50, 0, Math.PI*2); pCtx.fill();
                 }
             },
             {
                 id: 2,
-                hint: "What makes a smiley face happy?",
-                targetArea: { x: 150, y: 220, width: 100, height: 40 }, // Area for the smile
-                draw: (puzzleCtx, solvedCtx) => {
-                    // Solved state
-                    solvedCtx.fillStyle = 'yellow';
-                    solvedCtx.beginPath();
-                    solvedCtx.arc(200, 200, 150, 0, Math.PI * 2);
-                    solvedCtx.fill();
-                    solvedCtx.fillStyle = 'black';
-                    solvedCtx.beginPath(); // Eyes
-                    solvedCtx.arc(150, 150, 20, 0, Math.PI * 2);
-                    solvedCtx.arc(250, 150, 20, 0, Math.PI * 2);
-                    solvedCtx.fill();
-                    solvedCtx.beginPath(); // Smile
-                    solvedCtx.arc(200, 220, 80, 0, Math.PI, false);
-                    solvedCtx.lineWidth = 10;
-                    solvedCtx.stroke();
-                    
-                    // Puzzle state
-                    puzzleCtx.drawImage(solvedCtx.canvas, 0, 0);
-                    puzzleCtx.beginPath(); // Remove smile
-                    puzzleCtx.arc(200, 220, 85, 0, Math.PI, false);
-                    puzzleCtx.fillStyle = 'yellow';
-                    puzzleCtx.fill();
+                hint: "This person can't see without their glasses.",
+                targetArea: { x: 180, y: 190, width: 140, height: 50 },
+                draw: (pCtx, sCtx) => {
+                    // Solved State
+                    sCtx.fillStyle = '#f0f0f0'; sCtx.fillRect(0,0,500,500);
+                    sCtx.fillStyle = '#ffdbac'; // Skin
+                    sCtx.beginPath(); sCtx.arc(250, 250, 150, 0, Math.PI*2); sCtx.fill();
+                    sCtx.fillStyle = '#603813'; // Hair
+                    sCtx.beginPath(); sCtx.arc(250, 220, 150, 0, Math.PI, true); sCtx.fill();
+                    sCtx.fillStyle = 'black'; // Eyes
+                    sCtx.beginPath(); sCtx.arc(200, 250, 10, 0, Math.PI*2); sCtx.fill();
+                    sCtx.beginPath(); sCtx.arc(300, 250, 10, 0, Math.PI*2); sCtx.fill();
+                    sCtx.beginPath(); sCtx.arc(250, 320, 50, 0, Math.PI); sCtx.stroke(); // Mouth
+                    // Glasses
+                    sCtx.strokeStyle = 'black'; sCtx.lineWidth = 8;
+                    sCtx.beginPath(); sCtx.arc(215, 210, 25, 0, Math.PI*2); sCtx.stroke();
+                    sCtx.beginPath(); sCtx.arc(285, 210, 25, 0, Math.PI*2); sCtx.stroke();
+                    sCtx.beginPath(); sCtx.moveTo(240, 210); sCtx.lineTo(260, 210); sCtx.stroke();
+
+                    // Puzzle State
+                    pCtx.drawImage(sCtx.canvas, 0, 0);
+                    pCtx.fillStyle = '#f0f0f0'; // Cover glasses
+                    pCtx.fillRect(180, 180, 140, 60);
                 }
             },
              {
                 id: 3,
-                hint: "This car can't go anywhere without its wheels.",
-                targetArea: { x: 260, y: 250, width: 70, height: 70 }, // Missing wheel
-                draw: (puzzleCtx, solvedCtx) => {
-                    // Solved state
-                    solvedCtx.fillStyle = '#87CEEB'; // Sky
-                    solvedCtx.fillRect(0, 0, 400, 400);
-                    solvedCtx.fillStyle = '#7f8c8d'; // Road
-                    solvedCtx.fillRect(0, 300, 400, 100);
-                    solvedCtx.fillStyle = '#3498db'; // Car body
-                    solvedCtx.fillRect(100, 200, 200, 50);
-                    solvedCtx.fillRect(150, 150, 100, 50);
-                    solvedCtx.fillStyle = 'black'; // Wheels
-                    solvedCtx.beginPath();
-                    solvedCtx.arc(140, 275, 25, 0, 2 * Math.PI);
-                    solvedCtx.arc(280, 275, 25, 0, 2 * Math.PI);
-                    solvedCtx.fill();
+                hint: "A cat needs its tail to balance.",
+                targetArea: { x: 350, y: 250, width: 100, height: 100 },
+                draw: (pCtx, sCtx) => {
+                    sCtx.fillStyle = '#add8e6'; sCtx.fillRect(0,0,500,500);
+                    // Cat body
+                    sCtx.fillStyle = '#ffaa33';
+                    sCtx.beginPath(); sCtx.arc(250, 300, 80, 0, Math.PI*2); sCtx.fill(); // body
+                    sCtx.beginPath(); sCtx.arc(250, 220, 60, 0, Math.PI*2); sCtx.fill(); // head
+                    sCtx.beginPath(); // ears
+                    sCtx.moveTo(210, 180); sCtx.lineTo(230, 160); sCtx.lineTo(250, 180);
+                    sCtx.moveTo(290, 180); sCtx.lineTo(270, 160); sCtx.lineTo(250, 180);
+                    sCtx.fill();
+                    // Tail
+                    sCtx.strokeStyle = '#ffaa33'; sCtx.lineWidth = 20; sCtx.lineCap = 'round';
+                    sCtx.beginPath(); sCtx.moveTo(330, 300); sCtx.quadraticCurveTo(400, 250, 400, 320); sCtx.stroke();
                     
-                    // Puzzle state
-                    puzzleCtx.drawImage(solvedCtx.canvas, 0, 0);
-                    puzzleCtx.fillStyle = '#7f8c8d'; // Cover missing wheel with road color
-                    puzzleCtx.beginPath();
-                    puzzleCtx.arc(280, 275, 30, 0, 2 * Math.PI);
-                    puzzleCtx.fill();
+                    pCtx.drawImage(sCtx.canvas, 0, 0);
+                    pCtx.fillStyle = '#add8e6';
+                    pCtx.beginPath(); pCtx.arc(380, 290, 60, 0, Math.PI*2); pCtx.fill();
                 }
             },
+            // ... More levels will be added in the next part
         ];
-        gameState.levels = levels;
 
-
-        // --- 4. CORE GAME LOGIC ---
-
-        function loadLevel(levelIndex) {
-            if (levelIndex >= gameState.levels.length) {
-                // Game complete logic (e.g., show a final screen or loop)
-                alert("Congratulations! You've completed all levels!");
-                levelIndex = 0; // Loop back to the first level
-            }
-            gameState.currentLevel = levelIndex;
-            localStorage.setItem('dop_currentLevel', gameState.currentLevel);
-
-            const level = gameState.levels[levelIndex];
-            DOMElements.levelTitle.textContent = `Level ${level.id}`;
-
-            // Set canvas size based on container
-            const canvasSize = DOMElements.canvasContainer.clientWidth;
-            DOMElements.topCanvas.width = DOMElements.topCanvas.height = canvasSize;
-            DOMElements.bottomCanvas.width = DOMElements.bottomCanvas.height = canvasSize;
+        // --- 6. AUDIO MANAGER ---
+        const AudioManager = {
+            init() {
+                DOMElements.audio.music.src = AUDIO_DATA.MUSIC;
+                DOMElements.audio.win.src = AUDIO_DATA.WIN;
+                DOMElements.audio.click.src = AUDIO_DATA.CLICK;
+                DOMElements.audio.erase.src = AUDIO_DATA.ERASE;
+                
+                // A common mobile browser policy: audio can only be played after a user interaction.
+                document.body.addEventListener('click', this.unlockAudio, { once: true });
+                document.body.addEventListener('touchstart', this.unlockAudio, { once: true });
+            },
             
-            // The drawing functions assume a 400x400 canvas. We scale the context to match.
-            const scale = canvasSize / 400;
-            topCtx.setTransform(scale, 0, 0, scale, 0, 0);
-            bottomCtx.setTransform(scale, 0, 0, scale, 0, 0);
+            unlockAudio() {
+                DOMElements.audio.music.play().catch(()=>{});
+                DOMElements.audio.music.pause();
+                // This 'hack' prepares the audio elements for future plays.
+            },
 
-            // Clear canvases
-            topCtx.clearRect(0, 0, 400, 400);
-            bottomCtx.clearRect(0, 0, 400, 400);
-
-            // Draw the level
-            level.draw(topCtx, bottomCtx);
-        }
-
-        function getMousePos(canvas, evt) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
-            const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
-
-            return {
-                x: (clientX - rect.left) * scaleX,
-                y: (clientY - rect.top) * scaleY
-            };
-        }
-
-        function startDrawing(e) {
-            gameState.isDrawing = true;
-            draw(e); // Draw a single point on click/tap
-        }
-
-        function stopDrawing() {
-            if (!gameState.isDrawing) return;
-            gameState.isDrawing = false;
-            topCtx.beginPath(); // End the current path
-            checkWinCondition();
-        }
-
-        function draw(e) {
-            if (!gameState.isDrawing) return;
-            e.preventDefault();
-
-            const pos = getMousePos(DOMElements.topCanvas, e);
-            const canvasScale = DOMElements.topCanvas.width / 400; // Get the scale factor
-
-            // Use globalCompositeOperation to "erase"
-            topCtx.globalCompositeOperation = 'destination-out';
-            topCtx.beginPath();
-            topCtx.arc(pos.x / canvasScale, pos.y / canvasScale, ERASE_RADIUS, 0, Math.PI * 2, false);
-            topCtx.fill();
-        }
-
-        function checkWinCondition() {
-            const level = gameState.levels[gameState.currentLevel];
-            const target = level.targetArea;
-            
-            // Get the pixel data from the erased canvas within the target area
-            // We must account for the canvas scaling
-            const canvasScale = DOMElements.topCanvas.width / 400;
-            const scaledTarget = {
-                x: target.x * canvasScale,
-                y: target.y * canvasScale,
-                width: target.width * canvasScale,
-                height: target.height * canvasScale,
-            };
-
-            const imageData = topCtx.getImageData(scaledTarget.x, scaledTarget.y, scaledTarget.width, scaledTarget.height);
-            const pixelData = imageData.data;
-            
-            let transparentPixels = 0;
-            // Loop through the pixels (RGBA, so 4 values per pixel)
-            for (let i = 3; i < pixelData.length; i += 4) {
-                if (pixelData[i] === 0) { // Alpha channel is 0 (fully transparent)
-                    transparentPixels++;
+            play(sound) {
+                if (!gameState.soundEnabled) return;
+                const audioEl = DOMElements.audio[sound];
+                if (audioEl) {
+                    if(sound === 'music') {
+                        audioEl.volume = 0.3;
+                        audioEl.play().catch(e => console.warn("Music play failed:", e));
+                    } else {
+                        audioEl.currentTime = 0;
+                        audioEl.volume = 0.8;
+                        audioEl.play().catch(e => console.warn("SFX play failed:", e));
+                    }
                 }
-            }
-
-            const totalPixels = scaledTarget.width * scaledTarget.height;
-            const transparentPercentage = transparentPixels / totalPixels;
-
-            if (transparentPercentage >= WIN_PERCENTAGE) {
-                handleWin();
-            } else {
-                // Optional: Implement a "wrong erase" check here if needed
-                // For this version, we only check for a win, not a loss on every stroke.
-            }
-        }
-        
-        function handleWin() {
-            playSound('win');
-            vibrate(100);
-            DOMElements.levelCompletePopup.classList.add('visible');
-        }
-
-        function handleWrongErase() {
-            playSound('lose');
-            vibrate([50, 50, 50]);
-            DOMElements.canvasContainer.classList.add('shake');
-            DOMElements.tryAgainPopup.classList.add('visible');
+            },
             
-            setTimeout(() => {
-                DOMElements.canvasContainer.classList.remove('shake');
-            }, 500);
-        }
+            stop(sound) {
+                const audioEl = DOMElements.audio[sound];
+                if (audioEl) audioEl.pause();
+            },
 
-
-        // --- 5. UI & EVENT HANDLERS ---
-        
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-            document.getElementById(screenId).classList.remove('hidden');
-        }
-
-        function setupEventListeners() {
-            DOMElements.playBtn.addEventListener('click', () => {
-                showScreen('game-screen');
-                loadLevel(gameState.currentLevel);
-            });
-
-            // Canvas listeners
-            DOMElements.topCanvas.addEventListener('mousedown', startDrawing);
-            DOMElements.topCanvas.addEventListener('mouseup', stopDrawing);
-            DOMElements.topCanvas.addEventListener('mousemove', draw);
-            DOMElements.topCanvas.addEventListener('mouseleave', stopDrawing);
-
-            DOMElements.topCanvas.addEventListener('touchstart', startDrawing, { passive: false });
-            DOMElements.topCanvas.addEventListener('touchend', stopDrawing);
-            DOMElements.topCanvas.addEventListener('touchmove', draw, { passive: false });
-            DOMElements.topCanvas.addEventListener('touchcancel', stopDrawing);
-
-            // Popup buttons
-            DOMElements.nextLevelBtn.addEventListener('click', () => {
-                DOMElements.levelCompletePopup.classList.remove('visible');
-                const nextLevelIndex = gameState.currentLevel + 1;
-
-                // Check for interstitial ad
-                if (nextLevelIndex % INTERSTITIAL_AD_INTERVAL === 0 && nextLevelIndex > 0) {
-                    showInterstitialAd(() => loadLevel(nextLevelIndex));
+            toggleSound() {
+                gameState.soundEnabled = !gameState.soundEnabled;
+                const icon = DOMElements.buttons.soundToggle.querySelector('i');
+                if (gameState.soundEnabled) {
+                    icon.classList.remove('fa-volume-mute');
+                    icon.classList.add('fa-volume-up');
+                    this.play('music');
                 } else {
-                    loadLevel(nextLevelIndex);
-                }
-            });
-            
-            DOMElements.tryAgainBtn.addEventListener('click', () => {
-                DOMElements.tryAgainPopup.classList.remove('visible');
-                loadLevel(gameState.currentLevel); // Reload current level
-            });
-            
-            DOMElements.retryBtn.addEventListener('click', () => {
-                 loadLevel(gameState.currentLevel);
-            });
-
-            // Hint system
-            DOMElements.hintBtn.addEventListener('click', () => {
-                const hint = gameState.levels[gameState.currentLevel].hint;
-                DOMElements.hintText.textContent = hint;
-                DOMElements.hintPopup.classList.add('visible');
-            });
-
-            DOMElements.closeHintBtn.addEventListener('click', () => {
-                DOMElements.hintPopup.classList.remove('visible');
-            });
-            
-            // Sound toggle
-            DOMElements.soundToggleBtn.addEventListener('click', toggleSound);
-
-            // Ads
-            DOMElements.closeInterstitialBtn.addEventListener('click', () => {
-                DOMElements.interstitialAd.classList.add('hidden');
-                if (window.interstitialAdCallback) {
-                    window.interstitialAdCallback();
-                    window.interstitialAdCallback = null;
-                }
-            });
-        }
-// --- 6. SOUND & VIBRATION ---
-
-        // As we can't embed audio in a single HTML file without base64 encoding (which makes it huge),
-        // we'll simulate sounds with the Web Audio API. This creates tiny, synthetic sounds.
-        let audioCtx;
-        function initAudio() {
-            if (!audioCtx) {
-                try {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) {
-                    console.error("Web Audio API is not supported in this browser.");
+                    icon.classList.remove('fa-volume-up');
+                    icon.classList.add('fa-volume-mute');
+                    this.stop('music');
                 }
             }
-        }
+        };
 
-        function playSound(type) {
-            if (!gameState.soundEnabled || !audioCtx) return;
+        // --- 7. UI MANAGER ---
+        const UIManager = {
+            activeScreen: 'splash',
+            
+            showScreen(screenId) {
+                if (this.activeScreen === screenId) return;
+                const currentScreen = DOMElements.screens[this.activeScreen];
+                const nextScreen = DOMElements.screens[screenId];
+                
+                if (currentScreen) {
+                    currentScreen.classList.remove('active');
+                    currentScreen.classList.add('hidden');
+                }
+                if (nextScreen) {
+                    nextScreen.classList.remove('hidden');
+                    nextScreen.classList.add('active');
+                }
+                this.activeScreen = screenId;
+            },
 
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            showPopup(popupId) {
+                const popup = DOMElements.popups[popupId];
+                if (popup) popup.classList.add('visible');
+                AudioManager.play('click');
+            },
 
-            switch (type) {
-                case 'win':
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                    gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
-                    oscillator.frequency.linearRampToValueAtTime(1046.50, audioCtx.currentTime + 0.2); // C6
-                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-                    break;
-                case 'lose':
-                    oscillator.type = 'square';
-                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
-                    gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
-                    oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-                    break;
-                case 'click':
-                     oscillator.type = 'sine';
-                     oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
-                     gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
-                     gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
-                     break;
+            hidePopup(popupId) {
+                const popup = DOMElements.popups[popupId];
+                if (popup) popup.classList.remove('visible');
+            },
+            
+            shakeCanvas() {
+                DOMElements.game.canvasContainer.classList.add('shake');
+                setTimeout(() => {
+                    DOMElements.game.canvasContainer.classList.remove('shake');
+                }, 400);
             }
+        };
 
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.3);
-        }
+        // --- 8. CORE GAME LOGIC ---
+        const Game = {
+            topCtx: null,
+            bottomCtx: null,
 
-        function toggleSound() {
-            gameState.soundEnabled = !gameState.soundEnabled;
-            const icon = DOMElements.soundToggleBtn.querySelector('i');
-            if (gameState.soundEnabled) {
-                icon.classList.remove('fa-volume-mute');
-                icon.classList.add('fa-volume-up');
-                initAudio(); // Initialize audio context on first enable
-                playSound('click');
-            } else {
-                icon.classList.remove('fa-volume-up');
-                icon.classList.add('fa-volume-mute');
+            init() {
+                this.topCtx = DOMElements.game.topCanvas.getContext('2d');
+                this.bottomCtx = DOMElements.game.bottomCanvas.getContext('2d');
+                this.setupEventListeners();
+                this.loadProgress();
+            },
+
+            loadProgress() {
+                const savedLevel = localStorage.getItem('dop_pro_currentLevel');
+                gameState.currentLevel = savedLevel ? parseInt(savedLevel, 10) : 0;
+            },
+            
+            saveProgress() {
+                localStorage.setItem('dop_pro_currentLevel', gameState.currentLevel);
+            },
+start() {
+                UIManager.showScreen('game');
+                this.loadLevel(gameState.currentLevel);
+                if (gameState.soundEnabled) AudioManager.play('music');
+            },
+
+            loadLevel(levelIndex) {
+                if (levelIndex >= levelData.length) {
+                    console.log("All levels completed! Looping back.");
+                    levelIndex = 0; // Loop for endless play
+                }
+                gameState.currentLevel = levelIndex;
+                this.saveProgress();
+
+                const level = levelData[levelIndex];
+                DOMElements.game.levelTitle.textContent = `Level ${level.id}`;
+
+                // Set canvas physical size
+                const containerSize = DOMElements.game.canvasContainer.clientWidth;
+                DOMElements.game.topCanvas.width = DOMElements.game.topCanvas.height = containerSize;
+                DOMElements.game.bottomCanvas.width = DOMElements.game.bottomCanvas.height = containerSize;
+
+                // Set logical scaling
+                const scale = containerSize / CONFIG.CANVAS_LOGICAL_WIDTH;
+                this.topCtx.setTransform(scale, 0, 0, scale, 0, 0);
+                this.bottomCtx.setTransform(scale, 0, 0, scale, 0, 0);
+
+                // Clear and draw
+                this.topCtx.clearRect(0, 0, CONFIG.CANVAS_LOGICAL_WIDTH, CONFIG.CANVAS_LOGICAL_WIDTH);
+                this.bottomCtx.clearRect(0, 0, CONFIG.CANVAS_LOGICAL_WIDTH, CONFIG.CANVAS_LOGICAL_WIDTH);
+                level.draw(this.topCtx, this.bottomCtx);
+            },
+            
+            getCanvasPos(e) {
+                const rect = DOMElements.game.topCanvas.getBoundingClientRect();
+                const scaleX = DOMElements.game.topCanvas.width / rect.width;
+                const scaleY = DOMElements.game.topCanvas.height / rect.height;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY
+                };
+            },
+
+            startDrawing(e) {
+                gameState.isDrawing = true;
+                AudioManager.play('erase');
+                this.draw(e);
+            },
+
+            stopDrawing() {
+                if (!gameState.isDrawing) return;
+                gameState.isDrawing = false;
+                this.topCtx.beginPath(); // End current path
+                AudioManager.stop('erase');
+                this.checkWinCondition();
+            },
+
+            draw(e) {
+                if (!gameState.isDrawing) return;
+                e.preventDefault();
+
+                const pos = this.getCanvasPos(e);
+                const scale = DOMElements.game.topCanvas.width / CONFIG.CANVAS_LOGICAL_WIDTH;
+                
+                this.topCtx.globalCompositeOperation = 'destination-out';
+                this.topCtx.beginPath();
+                this.topCtx.arc(pos.x / scale, pos.y / scale, CONFIG.ERASE_RADIUS, 0, Math.PI * 2);
+                this.topCtx.fill();
+            },
+
+            checkWinCondition() {
+                const level = levelData[gameState.currentLevel];
+                const target = level.targetArea;
+                const scale = DOMElements.game.topCanvas.width / CONFIG.CANVAS_LOGICAL_WIDTH;
+
+                const scaledTarget = {
+                    x: target.x * scale, y: target.y * scale,
+                    width: target.width * scale, height: target.height * scale
+                };
+                
+                // Ensure dimensions are at least 1x1
+                if (scaledTarget.width < 1 || scaledTarget.height < 1) return;
+
+                const imageData = this.topCtx.getImageData(scaledTarget.x, scaledTarget.y, scaledTarget.width, scaledTarget.height);
+                const data = imageData.data;
+                let transparentPixels = 0;
+
+                for (let i = 3; i < data.length; i += 4) {
+                    if (data[i] < 128) { // Consider semi-transparent pixels as erased
+                        transparentPixels++;
+                    }
+                }
+
+                const totalPixels = scaledTarget.width * scaledTarget.height;
+                const erasedPercentage = transparentPixels / totalPixels;
+
+                if (erasedPercentage >= CONFIG.WIN_PERCENTAGE) {
+                    this.handleWin();
+                }
+            },
+
+            handleWin() {
+                AudioManager.play('win');
+                vibrate(100);
+                UIManager.showPopup('levelComplete');
+            },
+            
+            setupEventListeners() {
+                // Main Buttons
+                DOMElements.buttons.play.addEventListener('click', () => this.start());
+                DOMElements.buttons.soundToggle.addEventListener('click', () => AudioManager.toggleSound());
+
+                // Game Screen Buttons
+                DOMElements.buttons.retry.addEventListener('click', () => this.loadLevel(gameState.currentLevel));
+                DOMElements.buttons.hint.addEventListener('click', () => {
+                    const hint = levelData[gameState.currentLevel].hint;
+                    document.getElementById('hint-text-content').textContent = hint;
+                    UIManager.showPopup('hint');
+                });
+                
+                // Popup Buttons
+                DOMElements.buttons.nextLevel.addEventListener('click', () => {
+                    UIManager.hidePopup('levelComplete');
+                    const nextLevelIndex = gameState.currentLevel + 1;
+                    if (nextLevelIndex % CONFIG.INTERSTITIAL_AD_INTERVAL === 0) {
+                        showInterstitialAd(() => this.loadLevel(nextLevelIndex));
+                    } else {
+                        this.loadLevel(nextLevelIndex);
+                    }
+                });
+                
+                DOMElements.buttons.tryAgain.addEventListener('click', () => {
+                    UIManager.hidePopup('tryAgain');
+                    this.loadLevel(gameState.currentLevel);
+                });
+                
+                DOMElements.buttons.closeHint.addEventListener('click', () => UIManager.hidePopup('hint'));
+
+                // Ad Closing
+                DOMElements.buttons.closeInterstitial.addEventListener('click', () => {
+                    DOMElements.ads.interstitial.classList.add('hidden');
+                    if (window.interstitialCallback) {
+                        window.interstitialCallback();
+                        window.interstitialCallback = null;
+                    }
+                });
+
+                // Canvas Listeners
+                const canvas = DOMElements.game.topCanvas;
+                canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
+                canvas.addEventListener('mouseup', () => this.stopDrawing());
+                canvas.addEventListener('mouseleave', () => this.stopDrawing());
+                canvas.addEventListener('mousemove', (e) => this.draw(e));
+
+                canvas.addEventListener('touchstart', (e) => this.startDrawing(e), { passive: false });
+                canvas.addEventListener('touchend', () => this.stopDrawing());
+                canvas.addEventListener('touchcancel', () => this.stopDrawing());
+                canvas.addEventListener('touchmove', (e) => this.draw(e), { passive: false });
             }
-        }
-        
+        };
+
+        // --- 9. HELPERS & INITIALIZATION ---
         function vibrate(pattern) {
-            if (gameState.vibrationEnabled) {
-                navigator.vibrate(pattern);
-            }
+            if (gameState.vibrationEnabled) navigator.vibrate(pattern);
         }
-
-        // --- 7. MONETIZATION (PLACEHOLDERS) ---
 
         function showInterstitialAd(callback) {
-            DOMElements.interstitialAd.classList.remove('hidden');
-            // In a real app, you would listen for an ad SDK callback.
-            // Here, we'll just wait for the user to close it.
-            window.interstitialAdCallback = callback;
+            DOMElements.ads.interstitial.classList.remove('hidden');
+            window.interstitialCallback = callback;
         }
 
+        function initializeApp() {
+            // Add more levels to the data array
+            levelData.push(
+                {
+                    id: 4,
+                    hint: "A teapot is useless without a spout.",
+                    targetArea: { x: 300, y: 250, width: 80, height: 80 },
+                    draw: (pCtx, sCtx) => {
+                        sCtx.fillStyle = '#eee'; sCtx.fillRect(0,0,500,500);
+                        // Teapot
+                        sCtx.fillStyle = '#dc143c'; // Crimson
+                        sCtx.beginPath(); sCtx.arc(200, 300, 100, 0, Math.PI*2); sCtx.fill(); // Body
+                        sCtx.fillRect(150, 180, 100, 50); // Lid
+                        sCtx.beginPath(); sCtx.arc(200, 180, 20, 0, Math.PI*2); sCtx.fill(); // Lid handle
+                        sCtx.strokeStyle = '#dc143c'; sCtx.lineWidth = 25;
+                        sCtx.beginPath(); sCtx.arc(100, 300, 60, Math.PI*0.5, Math.PI*1.5); sCtx.stroke(); // Handle
+                        // Spout
+                        sCtx.beginPath(); sCtx.moveTo(300, 280); sCtx.lineTo(350, 250); sCtx.lineTo(360, 260); sCtx.lineTo(310, 290); sCtx.closePath(); sCtx.fill();
+                        
+                        pCtx.drawImage(sCtx.canvas, 0, 0);
+                        pCtx.fillStyle = '#eee';
+                        pCtx.beginPath(); pCtx.arc(340, 270, 50, 0, Math.PI*2); pCtx.fill();
+                    }
+                },
+                {
+                    id: 5,
+                    hint: "This sad face wants to be happy.",
+                    targetArea: { x: 200, y: 330, width: 100, height: 50 },
+                    draw: (pCtx, sCtx) => {
+                        // Solved State (Happy)
+                        sCtx.fillStyle = '#ffd700'; sCtx.beginPath(); sCtx.arc(250, 250, 200, 0, Math.PI*2); sCtx.fill();
+                        sCtx.fillStyle = 'black';
+                        sCtx.beginPath(); sCtx.arc(180, 200, 25, 0, Math.PI*2); sCtx.fill(); // Left eye
+                        sCtx.beginPath(); sCtx.arc(320, 200, 25, 0, Math.PI*2); sCtx.fill(); // Right eye
+                        sCtx.strokeStyle = 'black'; sCtx.lineWidth = 15;
+                        sCtx.beginPath(); sCtx.arc(250, 280, 100, 0, Math.PI, false); sCtx.stroke(); // Smile
 
-        // --- 8. INITIALIZATION ---
-
-        function init() {
-            // Add a global click listener for button sound effects
-             document.body.addEventListener('click', (e) => {
-                if (e.target.matches('button, .app-bar-icon')) {
-                    playSound('click');
-                    vibrate(20);
+                        // Puzzle State (Sad)
+                        pCtx.drawImage(sCtx.canvas, 0, 0);
+                        pCtx.fillStyle = '#ffd700'; // Cover smile
+                        pCtx.beginPath(); pCtx.arc(250, 280, 110, 0, Math.PI, false); pCtx.fill();
+                        pCtx.beginPath(); pCtx.arc(250, 350, 100, Math.PI, Math.PI*2, false); sCtx.stroke(); // Frown
+                    }
+                },
+                 {
+                    id: 6,
+                    hint: "Let the bird fly free!",
+                    targetArea: { x: 180, y: 150, width: 140, height: 200 },
+                    draw: (pCtx, sCtx) => {
+                        sCtx.fillStyle = '#87ceeb'; sCtx.fillRect(0,0,500,500); // Sky
+                        // Bird
+                        sCtx.fillStyle = '#ff4500';
+                        sCtx.beginPath(); sCtx.arc(250, 250, 40, 0, Math.PI*2); sCtx.fill();
+                        sCtx.beginPath(); sCtx.moveTo(280, 230); sCtx.quadraticCurveTo(320, 200, 350, 230); sCtx.fill();
+                        
+                        pCtx.drawImage(sCtx.canvas, 0, 0);
+                        // Cage
+                        pCtx.strokeStyle = '#36454f'; pCtx.lineWidth = 10;
+                        pCtx.beginPath(); pCtx.arc(250, 250, 100, 0, Math.PI, true); pCtx.stroke(); // Top
+                        pCtx.strokeRect(150, 250, 200, 150); // Bottom
+                        for(let i = 180; i < 350; i += 30) {
+                            pCtx.beginPath(); pCtx.moveTo(i, 150); pCtx.lineTo(i, 400); pCtx.stroke(); // Bars
+                        }
+                    }
                 }
-            }, true);
+            );
+            // Can add more levels here following the same structure.
 
-            setupEventListeners();
+            AudioManager.init();
+            Game.init();
             
-            // Load progress
-            const savedLevel = localStorage.getItem('dop_currentLevel');
-            if (savedLevel) {
-                gameState.currentLevel = parseInt(savedLevel, 10);
-            }
-
-            // Simulate app loading
             setTimeout(() => {
-                DOMElements.splashScreen.classList.add('hidden');
-                showScreen('home-screen');
-            }, 1500);
+                UIManager.showScreen('home');
+            }, 2500);
         }
 
-        init(); // Start the application
+        initializeApp();
     });
-
     </script>
 </body>
-</html>```
+</html>
