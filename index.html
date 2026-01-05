@@ -1,174 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> Cric Tv Sony Liv 2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cric Yoddha - Professional Admin</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">
-
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      background: #000;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .shaka-video-container {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      object-fit: contain;
-    }
-    .shaka-spinner-container,
-    .shaka-spinner,
-    .shaka-spinner-svg {
-      display: none !important;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="shaka-video-container" data-shaka-player>
-    <video autoplay playsinline preload="metadata"></video>
-  </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-
-  shaka.polyfill.installAll();
-  if (!shaka.Player.isBrowserSupported()) return;
-
-  const video = document.querySelector('video');
-  const player = new shaka.Player();
-  await player.attach(video);
-
-  const container = document.querySelector('.shaka-video-container');
-  const ui = new shaka.ui.Overlay(player, container, video);
-
-  ui.configure({
-    controlPanelElements: [
-      'play_pause','time_and_duration','mute','volume',
-      'spacer','language','captions','picture_in_picture',
-      'quality','fullscreen'
-    ],
-    seekBarColors: {
-      base: 'white',
-      buffered: 'red',
-      played: 'green'
-    }
-  });
-
-  let drmConfig = {
-    clearKeys: {
-      "ef24516ae38b50d18049343cd1cd998a":
-      "eb4810ec250a1795a0019dba7881ff45"
-    }
-  };
-
-  let cookieHeader =
-    "__hdnea__=st=1759751405~exp=1759837805~acl=/*~hmac=be0a77ab3649dfd1c57f6c0801fad8aa319a16d2063f18fdb21ebe43c043f7bf";
-
-  let streamUrl =
-    "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_2_MOB/WDVLive/index.mpd";
-
-  try {
-    const response = await fetch(
-      'https://raw.githubusercontent.com/alex8875/m3u/refs/heads/main/jstar.m3u'
-    );
-    const m3uText = await response.text();
-    const lines = m3uText.split('\n');
-
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].includes('Star_Sports_HD')) {
-        for (let j = i - 1; j >= 0; j--) {
-          if (lines[j].startsWith('#EXTHTTP:')) {
-            const cookieMatch =
-              lines[j].match(/"cookie":"([^"]+)"/);
-            if (cookieMatch) {
-              cookieHeader = cookieMatch[1];
-            }
-            break;
-          }
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --accent: #f43f5e;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --border: #334155;
+            --success: #22c55e;
         }
-        break;
-      }
-    }
-  } catch (e) {}
 
-  let backupCookie = null;
-  let usingBackupCookie = false;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
 
-  async function fetchBackupCookie() {
-    if (backupCookie) return backupCookie;
-    const res = await fetch('https://crickettv.site/api/cookie.json');
-    const data = await res.json();
-    backupCookie = data.cookie;
-    return backupCookie;
-  }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-  async function switchToBackupCookie() {
-    if (usingBackupCookie) return;
-    usingBackupCookie = true;
-    cookieHeader = await fetchBackupCookie();
-    try {
-      await player.unload();
-      await player.load(streamUrl);
-      video.play();
-    } catch (e) {}
-  }
+        .admin-wrapper { width: 100%; max-width: 480px; padding: 20px; }
 
-  player.configure({
-    drm: drmConfig
-  });
+        .app-bar {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .app-bar i { font-size: 24px; color: var(--primary); margin-right: 12px; }
+        .app-bar h2 { font-size: 20px; font-weight: 700; }
 
-  player.getNetworkingEngine().registerRequestFilter((type, request) => {
-    request.headers['Referer'] = 'https://www.jiotv.com/';
-    request.headers['User-Agent'] =
-      "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-    request.headers['Cookie'] = cookieHeader;
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
 
-    if (
-      (type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-       type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
-      request.uris[0] &&
-      !request.uris[0].includes('__hdnea=')
-    ) {
-      const sep = request.uris[0].includes('?') ? '&' : '?';
-      request.uris[0] += sep + cookieHeader;
-    }
-  });
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
 
-  player.addEventListener('error', async (event) => {
-    const err = event.detail;
-    if (
-      !usingBackupCookie &&
-      (
-        err.code === 401 ||
-        err.code === 403 ||
-        err.code === shaka.util.Error.Code.BAD_HTTP_STATUS ||
-        err.code === shaka.util.Error.Code.MANIFEST_UNAVAILABLE
-      )
-    ) {
-      await switchToBackupCookie();
-    }
-  });
+        input, select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
 
-  try {
-    await player.load(streamUrl);
-    video.play();
-  } catch (e) {}
+        input:focus { border-color: var(--primary); outline: none; background: #0f213a; }
 
-});
-</script>
+        .preview-box {
+            width: 100%;
+            height: 160px;
+            background: #070b14;
+            border-radius: 14px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px dashed var(--border);
+        }
+        #preview-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .no-preview { color: #475569; font-size: 14px; }
+
+        .btn-update {
+            width: 100%;
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+        .btn-update:active { transform: scale(0.97); }
+
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--success); color: white; padding: 12px 25px;
+            border-radius: 50px; font-weight: 600; display: none; z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Data Updated Successfully! ✅</div>
+
+    <div class="admin-wrapper">
+        <div class="app-bar">
+            <i class="fas fa-shield-alt"></i>
+            <h2>Cric Yoddha Admin</h2>
+        </div>
+
+        <div class="card">
+            <div class="input-group">
+                <label>Channel Name</label>
+                <input type="text" id="mChannel" placeholder="Ex: Star Sports 1 HD">
+            </div>
+
+            <div class="input-group">
+                <label>Match Title</label>
+                <input type="text" id="mTitle" placeholder="Ex: India vs Australia">
+            </div>
+
+            <div class="input-group">
+                <label>Channel Logo / Thumbnail URL</label>
+                <input type="text" id="mPoster" placeholder="https://link-to-image.jpg" oninput="updatePreview(this.value)">
+                <div class="preview-box">
+                    <span class="no-preview" id="pre-text">Image Preview</span>
+                    <img id="preview-img" src="" alt="Thumbnail">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Streaming URL</label>
+                <input type="text" id="mUrl" placeholder="https://ss2hd-theta.vercel.app/">
+            </div>
+
+            <div class="input-group">
+                <label>App Status</label>
+                <select id="mStatus">
+                    <option value="LIVE">ONLINE (Show Stream)</option>
+                    <option value="OFFLINE">OFFLINE (Hide Stream)</option>
+                </select>
+            </div>
+
+            <div class="input-group" style="margin-top: 30px;">
+                <label style="color: var(--accent);">Admin Secret Pin</label>
+                <input type="password" id="adminPin" placeholder="Enter Pin to Save">
+            </div>
+
+            <button class="btn-update" onclick="handleUpdate()">
+                <i class="fas fa-paper-plane"></i> UPDATE USER APP
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- YOUR FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6a6kH-_7jFTEEIhMTwEOLKMLj7qmtLgQ",
+            authDomain: "cric-yoddha.firebaseapp.com",
+            databaseURL: "https://cric-yoddha-default-rtdb.firebaseio.com",
+            projectId: "cric-yoddha",
+            storageBucket: "cric-yoddha.firebasestorage.app",
+            messagingSenderId: "340220638066",
+            appId: "1:340220638066:web:1360dc2c34e3b8b7a263eb"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function updatePreview(url) {
+            const img = document.getElementById('preview-img');
+            const text = document.getElementById('pre-text');
+            if(url) {
+                img.src = url; img.style.display = 'block'; text.style.display = 'none';
+            } else {
+                img.style.display = 'none'; text.style.display = 'block';
+            }
+        }
+
+        function handleUpdate() {
+            const channel = document.getElementById('mChannel').value;
+            const title = document.getElementById('mTitle').value;
+            const poster = document.getElementById('mPoster').value;
+            const url = document.getElementById('mUrl').value;
+            const status = document.getElementById('mStatus').value;
+            const pin = document.getElementById('adminPin').value;
+
+            // Security Pin
+            if (pin !== "2026") {
+                alert("Incorrect Pin! Data not saved.");
+                return;
+            }
+
+            if (!channel || !url || !poster) {
+                alert("Please fill Channel Name, URL and Thumbnail!");
+                return;
+            }
+
+            database.ref('liveData').set({
+                channelName: channel,
+                matchTitle: title,
+                thumbnail: poster,
+                streamUrl: url,
+                appStatus: status,
+                timestamp: Date.now()
+            })
+            .then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            })
+            .catch((e) => alert("Error: " + e.message));
+        }
+
+        // Fetch Current Data
+        database.ref('liveData').on('value', (snap) => {
+            const data = snap.val();
+            if(data) {
+                document.getElementById('mChannel').value = data.channelName || "";
+                document.getElementById('mTitle').value = data.matchTitle || "";
+                document.getElementById('mPoster').value = data.thumbnail || "";
+                document.getElementById('mUrl').value = data.streamUrl || "";
+                document.getElementById('mStatus').value = data.appStatus || "LIVE";
+                updatePreview(data.thumbnail);
+            }
+        });
+    </script>
 </body>
 </html>
+
