@@ -1,1 +1,101 @@
 
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Prime By Cricket Yoddha</title>     
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
+  <style>  
+   * { margin: 0; padding: 0; box-sizing: border-box; }  
+    html, body {  
+      background: #000;  
+      height: 100vh;  
+      width: 100vw;  
+      overflow: hidden;  
+      font-family: system-ui, -apple-system, sans-serif;  
+    }  
+    .shaka-video-container {  
+      position: absolute;  
+      inset: 0;  
+      width: 100%;  
+      height: 100%;  
+    }  
+    video {  
+      width: 100%;  
+      height: 100%;  
+      background: #000;  
+      object-fit: contain;  
+    }  
+    /* Spinner Hidden for clean look */
+    .shaka-spinner-container { display: none !important; }  
+  </style>  
+</head>  
+<body>  
+  <div class="shaka-video-container" data-shaka-player>  
+    <video id="video" autoplay muted playsinline preload="metadata" poster="https://i.ibb.co/8DHnQ6f8/image-search-1770442885382.jpg"></video>  
+  </div>  
+  
+  <script>  
+    async function initPlayer() {  
+      shaka.polyfill.installAll();  
+  
+      if (!shaka.Player.isBrowserSupported()) {  
+        console.error('Browser not supported!');  
+        return;  
+      }  
+  
+      const video = document.getElementById('video');  
+      const container = document.querySelector('.shaka-video-container');  
+      const player = new shaka.Player(video);  
+      
+      const ui = new shaka.ui.Overlay(player, container, video);  
+      ui.configure({  
+        controlPanelElements: [  
+          'play_pause', 'time_and_duration', 'mute', 'volume',  
+          'spacer', 'quality', 'picture_in_picture', 'fullscreen'  
+        ],  
+        seekBarColors: {  
+          base: 'rgba(255, 255, 0, 0.3)',  
+          buffered: 'rgba(255, 255, 0, 0.5)',  
+          played: 'rgb(255, 255, 0)'  
+        }  
+      });  
+  
+      // New Stream URL from your request
+      const streamUrl = "https://otte.live.fly.ww.aiv-cdn.net/bom-nitro/live/dash/enc/feh5lmnfkl/out/v1/2f30a0bcdbc64a09b2e101d0b71ed290/cenc.mpd";  
+      
+      player.configure({  
+        drm: {  
+          clearKeys: {  
+            "dc9ab6bff6028c1685847a104e2d5a21": "de34baecf3f167ad1c847836397d38ca"  
+          }  
+        },  
+        streaming: {  
+          lowLatencyMode: true,  
+          jumpLargeGaps: true,
+          bufferingGoal: 10,
+          retryParameters: {
+            maxAttempts: 4,
+            baseDelay: 1000,
+            backoffFactor: 2
+          }
+        }  
+      });  
+  
+      player.addEventListener('error', (e) => console.error('Shaka Error:', e.detail));  
+  
+      try {  
+        await player.load(streamUrl);  
+        console.log("Stream successfully loaded!");  
+      } catch (error) {  
+        console.error('Error loading stream:', error);  
+      }  
+    }  
+
+    document.addEventListener('shaka-ui-loaded', initPlayer);  
+    document.addEventListener('DOMContentLoaded', () => { if (!window.shaka) initPlayer(); });
+  </script>  
+</body>  
+</html>
