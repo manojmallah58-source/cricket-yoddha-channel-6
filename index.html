@@ -63,45 +63,51 @@
         }  
       });  
   
-      // ✅ Updated Stream URL (New)
-      const streamUrl = "https://ta.bia-cf.live.pv-cdn.net/syd-nitro/live/clients/dash/enc/utvv87801b/out/v1/d9a29796c1c3468785dbee1776ffd354/cenc.mpd?drmScheme=clearkey";  
+      // ✅ Updated Stream URL
+      const streamUrl = "https://abdiqdlaaaaaaaamd3yw4nq5noo2t.ta.bia-cf.live.pv-cdn.net/syd-nitro/live/clients/dash/enc/xhryamnmfi/out/v1/bb976c39247941f3b4c9fa0a0735426d/cenc.mpd?|drmScheme=clearkey";  
       
       player.configure({  
         drm: {  
           clearKeys: {  
-            // ✅ Updated DRM License Keys (New)
-            "531599a595f0a03ced73300beaec99b7": "f5a77d391847790f46059cbb092d575b"  
+            // ✅ Updated DRM Keys
+            "693edaf34d4f31acbe87939c9f9795dd": "b0895d3454c582f5ff31aee075e3b673"  
           }  
         },  
         streaming: {  
           lowLatencyMode: true,  
           jumpLargeGaps: true,
           bufferingGoal: 10,
-          manifestUpdatePeriod: 2,
+          rebufferingGoal: 2,
           retryParameters: {
-            maxAttempts: 10,
+            maxAttempts: 5,
             baseDelay: 1000,
             backoffFactor: 2,
           }
         }  
       });  
   
+      // Error handling listener
       player.addEventListener('error', (e) => console.error('Shaka Error:', e.detail));  
+
+      // Auto-unmute on first click (Browser restriction bypass)
+      video.addEventListener('click', () => {
+          if (video.muted) { video.muted = false; }
+      });
   
       try {  
         await player.load(streamUrl);  
-        console.log("Stream successfully loaded with new keys!");  
+        console.log("Stream successfully loaded!");  
       } catch (error) {  
         console.error('Error loading stream:', error);  
       }  
     }  
 
-    // Safer initialization
+    // Enhanced Init Logic
     if (document.readyState === 'complete') {
-      initPlayer();
+        initPlayer();
     } else {
-      document.addEventListener('shaka-ui-loaded', initPlayer);
-      window.addEventListener('load', () => { if (!window.shaka) initPlayer(); });
+        document.addEventListener('shaka-ui-loaded', initPlayer);
+        window.addEventListener('load', () => { if (!window.shaka) initPlayer(); });
     }
   </script>  
 </body>  
