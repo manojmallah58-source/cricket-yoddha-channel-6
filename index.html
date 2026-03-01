@@ -27,7 +27,6 @@
       background: #000;  
       object-fit: contain;  
     }  
-    /* Spinner Hidden for clean look */
     .shaka-spinner-container { display: none !important; }  
   </style>  
 </head>  
@@ -37,19 +36,20 @@
   </div>  
   
   <script>  
-    async function initPlayer() {  
+    async function initApp() {  
       shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
+      if (shaka.Player.isBrowserSupported()) {  
+        initPlayer();  
+      } else {  
         console.error('Browser not supported!');  
-        return;  
       }  
-  
+    }
+
+    async function initPlayer() {  
       const video = document.getElementById('video');  
       const container = document.querySelector('.shaka-video-container');  
       const player = new shaka.Player(video);  
       
-      // UI Configuration
       const ui = new shaka.ui.Overlay(player, container, video);  
       ui.configure({  
         controlPanelElements: [  
@@ -63,52 +63,36 @@
         }  
       });  
   
-      // ✅ Updated Stream URL
-      const streamUrl = "https://abdiqdlaaaaaaaamd3yw4nq5noo2t.ta.bia-cf.live.pv-cdn.net/syd-nitro/live/clients/dash/enc/xhryamnmfi/out/v1/bb976c39247941f3b4c9fa0a0735426d/cenc.mpd?|drmScheme=clearkey";  
+      // ✅ Updated New Stream URL (Amazon/AIV CDN)
+      const streamUrl = "https://otte.cache.aiv-cdn.net/syd-nitro/live/dash/enc/wese7mithc/out/v1/2f30a0bcdbc64a09b2e101d0b71ed290/cenc.mpd";  
       
       player.configure({  
         drm: {  
           clearKeys: {  
-            // ✅ Updated DRM Keys
-            "693edaf34d4f31acbe87939c9f9795dd": "b0895d3454c582f5ff31aee075e3b673"  
+            // ✅ Updated New DRM Keys (KID : KEY)
+            "98f575d59c64c89f8431d0d8c02d8550": "e28cd2cda190f7566520480bff3bca7c"  
           }  
         },  
         streaming: {  
           lowLatencyMode: true,  
           jumpLargeGaps: true,
-          bufferingGoal: 10,
           rebufferingGoal: 2,
-          retryParameters: {
-            maxAttempts: 5,
-            baseDelay: 1000,
-            backoffFactor: 2,
-          }
+          bufferingGoal: 10
         }  
       });  
   
-      // Error handling listener
       player.addEventListener('error', (e) => console.error('Shaka Error:', e.detail));  
-
-      // Auto-unmute on first click (Browser restriction bypass)
-      video.addEventListener('click', () => {
-          if (video.muted) { video.muted = false; }
-      });
   
       try {  
         await player.load(streamUrl);  
-        console.log("Stream successfully loaded!");  
+        console.log("Stream successfully loaded with new keys!");  
       } catch (error) {  
         console.error('Error loading stream:', error);  
       }  
     }  
 
-    // Enhanced Init Logic
-    if (document.readyState === 'complete') {
-        initPlayer();
-    } else {
-        document.addEventListener('shaka-ui-loaded', initPlayer);
-        window.addEventListener('load', () => { if (!window.shaka) initPlayer(); });
-    }
+    document.addEventListener('shaka-ui-loaded', initApp);
+    document.addEventListener('DOMContentLoaded', () => { if (!window.shaka) initApp(); });
   </script>  
 </body>  
 </html>
