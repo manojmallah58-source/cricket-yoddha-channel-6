@@ -32,7 +32,7 @@
 </head>  
 <body>  
   <div class="shaka-video-container" data-shaka-player>  
-    <video id="video" autoplay muted playsinline preload="metadata" poster="https://i.ibb.co/8DHnQ6f8/image-search-1770442885382.jpg"></video>  
+    <video id="video" autoplay playsinline preload="metadata" poster="https://i.ibb.co/8DHnQ6f8/image-search-1770442885382.jpg"></video>  
   </div>  
   
   <script>  
@@ -63,13 +63,11 @@
         }  
       });  
   
-      // ✅ Updated Stream URL (DishHome)
       const streamUrl = "https://ottlive.dishhome.com.np/protected/jQTOzZkB0RDJ74Ryniuo/dash/manifest.mpd";  
       
       player.configure({  
         drm: {  
           clearKeys: {  
-            // ✅ Updated ClearKey
             "a7712196dbee413ab510c825e5c4d3f0": "1ade126fa6a9162ba34bd5de5b1427ca"  
           }  
         },  
@@ -85,14 +83,17 @@
           jumpLargeGaps: true,
           rebufferingGoal: 2,
           bufferingGoal: 10
-        }  
+        }
       });  
   
       player.addEventListener('error', (e) => console.error('Shaka Error:', e.detail));  
   
       try {  
-        await player.load(streamUrl);  
-        console.log("Stream successfully loaded!");  
+        await player.load(streamUrl);
+        // ✅ Awaaz ko Full (100%) karne ke liye line
+        video.volume = 1.0; 
+        video.muted = false;
+        console.log("Stream loaded with Full Volume!");  
       } catch (error) {  
         console.error('Error loading stream:', error);  
       }  
