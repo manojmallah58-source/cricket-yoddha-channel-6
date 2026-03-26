@@ -32,7 +32,7 @@
 </head>  
 <body>  
   <div class="shaka-video-container" data-shaka-player>  
-    <video id="video" autoplay playsinline preload="metadata" poster="https://i.ibb.co/8DHnQ6f8/image-search-1770442885382.jpg"></video>  
+    <video id="video" autoplay muted playsinline preload="metadata" poster="https://i.ibb.co/8DHnQ6f8/image-search-1770442885382.jpg"></video>  
   </div>  
   
   <script>  
@@ -63,12 +63,14 @@
         }  
       });  
   
-      const streamUrl = "https://ottlive.dishhome.com.np/protected/jQTOzZkB0RDJ74Ryniuo/dash/manifest.mpd";  
+      // ✅ Updated Akamai Stream URL
+      const streamUrl = "https://a96aivottlinear-a.akamaihd.net/OTTB/iad-nitro/enc/ued7n6of0i/out/v1/3546dc4b9a1f4526bf3362db59baee08/cenc.mpd";  
       
       player.configure({  
         drm: {  
           clearKeys: {  
-            "a7712196dbee413ab510c825e5c4d3f0": "1ade126fa6a9162ba34bd5de5b1427ca"  
+            // ✅ Updated ClearKey (KID: KEY)
+            "8cb27e0a167938efd74a91837f9a2a6f": "8b4126342c1a6ecf7b960fec34c633b9"  
           }  
         },  
         manifest: {
@@ -83,17 +85,14 @@
           jumpLargeGaps: true,
           rebufferingGoal: 2,
           bufferingGoal: 10
-        }
+        }  
       });  
   
       player.addEventListener('error', (e) => console.error('Shaka Error:', e.detail));  
   
       try {  
-        await player.load(streamUrl);
-        // ✅ Awaaz ko Full (100%) karne ke liye line
-        video.volume = 1.0; 
-        video.muted = false;
-        console.log("Stream loaded with Full Volume!");  
+        await player.load(streamUrl);  
+        console.log("Stream successfully loaded!");  
       } catch (error) {  
         console.error('Error loading stream:', error);  
       }  
