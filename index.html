@@ -63,14 +63,14 @@
         }  
       });  
   
-      // ✅ Updated Stream URL
-      const streamUrl = "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/nn1qrdjaha/out/v1/bc4fa7d9cebf47858bebf14ad589025e/cenc.mpd";  
+      // ✅ Updated Stream URL (DishHome)
+      const streamUrl = "https://ottlive.dishhome.com.np/protected/jQTOzZkB0RDJ74Ryniuo/dash/manifest.mpd";  
       
       player.configure({  
         drm: {  
           clearKeys: {  
-            // ✅ Updated Keys
-            "9909e33838e1152cc512c4636f513f8f": "02f67060c94bcc3307280f505ad508ab"  
+            // ✅ Updated ClearKey
+            "a7712196dbee413ab510c825e5c4d3f0": "1ade126fa6a9162ba34bd5de5b1427ca"  
           }  
         },  
         manifest: {
@@ -92,7 +92,7 @@
   
       try {  
         await player.load(streamUrl);  
-        console.log("Hindi Stream successfully loaded!");  
+        console.log("Stream successfully loaded!");  
       } catch (error) {  
         console.error('Error loading stream:', error);  
       }  
