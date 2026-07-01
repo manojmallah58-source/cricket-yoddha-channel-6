@@ -1,114 +1,58 @@
-<!DOCTYPE html>  
-<html>  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>Prime By Cricket Yoddha</title>     
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
-  <style>  
-   * { margin: 0; padding: 0; box-sizing: border-box; }  
-    html, body {  
-      background: #000;  
-      height: 100vh;  
-      width: 100vw;  
-      overflow: hidden;  
-      font-family: system-ui, -apple-system, sans-serif;  
-    }  
-    .shaka-video-container {  
-      position: absolute;  
-      inset: 0;  
-      width: 100%;  
-      height: 100%;  
-    }  
-    video {  
-      width: 100%;  
-      height: 100%;  
-      background: #000;  
-      object-fit: contain;  
-    }  
-    /* Shaka Spinner Hiding */
-    .shaka-spinner-container,  
-    .shaka-spinner,  
-    .shaka-spinner-svg {  
-      display: none !important;  
-      visibility: hidden !important;  
-      opacity: 0 !important;  
-    }  
-  </style>  
-</head>  
-<body>  
-  <div class="shaka-video-container" data-shaka-player>  
-    <video autoplay muted playsinline preload="metadata" poster="https://i.ibb.co/nMBMq5qL/20260602-220931.jpg"></video>  
-  </div>  
-  
-  <script>  
-    document.addEventListener('DOMContentLoaded', async () => {  
-      shaka.polyfill.installAll();  
-  
-      if (!shaka.Player.isBrowserSupported()) {  
-        console.error('Browser not supported');  
-        return;  
-      }  
-  
-      const video = document.querySelector('video');  
-      const player = new shaka.Player();  
-      await player.attach(video);  
-  
-      const container = document.querySelector('.shaka-video-container');  
-      const ui = new shaka.ui.Overlay(player, container, video);  
-  
-      ui.configure({  
-        controlPanelElements: [  
-          'play_pause', 'time_and_duration', 'mute', 'volume',  
-          'spacer', 'language', 'captions', 'picture_in_picture',  
-          'quality', 'fullscreen'  
-        ],  
-        volumeBarColors: {  
-          base: 'rgba(255, 192, 203, 0.3)',  
-          level: 'rgb(255, 105, 180)'
-        },  
-        seekBarColors: {  
-          base: 'rgba(255, 255, 0, 0.3)',  
-          buffered: 'rgba(255, 255, 0, 0.6)',  
-          played: 'rgb(255, 255, 0)'  
-        }  
-      });  
-  
-      // Updated DRM Keys
-      let drmConfig = {  
-        clearKeys: {  
-          "c5fbe2d8a20791b8a67827fa7458d632": "ec3ae47aa5345c042f5f536f380ae29d"  
-        }  
-      };  
-  
-      // Updated MPD URL
-      let streamUrl = "https://sundirectgo-live.pc.cdn.bitgravity.com/svchd18/dth.mpd?Null";  
-  
-      player.configure({  
-        drm: drmConfig,  
-        streaming: {  
-          lowLatencyMode: true,  
-          bufferingGoal: 10,  
-          rebufferingGoal: 2,  
-          retryParameters: {  
-            timeout: 10000,  
-            maxAttempts: 5  
-          }  
-        }  
-      });  
-  
-      player.addEventListener('error', (event) => {  
-        console.error('Shaka Player Error:', event.detail);  
-      });  
-  
-      try {  
-        await player.load(streamUrl);  
-        console.log("Stream loaded successfully");  
-      } catch (error) {  
-        console.error('Load error:', error);  
-      }  
-    });  
-  </script>  
-</body>  
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css">
+    <script src="https://cdn.plyr.io/3.6.3/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden; /* Scroll bars ko hatane ke liye */
+        }
+        .player-wrapper {
+            width: 100vw;
+            height: 100vh;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-wrapper">
+        <video id="player" autoplay controls playsinline crossorigin></video>
+    </div>
+
+    <script>
+        function getParam(name){
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        var stream = getParam("embed");
+        const video = document.getElementById("player");
+
+        if (Hls.isSupported()) {
+            const hls = new Hls({maxMaxBufferLength:100});
+            hls.loadSource(stream);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function(){
+                // Plyr ko configure kiya gaya hai full screen support ke sath
+                const player = new Plyr(video, {
+                    fullscreen: { enabled: true, fallback: true, iosNative: true },
+                    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen']
+                });
+            });
+        } else {
+            video.src = stream;
+            new Plyr(video);
+        }
+    </script>
+</body>
 </html>
