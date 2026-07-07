@@ -1,57 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css">
-    <script src="https://cdn.plyr.io/3.6.3/plyr.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js"></script>
-    
-    <style>
-        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .player-wrapper { width: 100%; max-width: 1000px; }
-        video { width: 100%; background: #000; }
-    </style>
-</head>
-<body>
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Prime By Cricket Yoddha</title>     
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.ui.min.js" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/controls.min.css" crossorigin="anonymous">  
+  <style>  
+    * { margin: 0; padding: 0; box-sizing: border-box; }  
+    html, body { background: #000; height: 100vh; width: 100vw; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }  
+    .shaka-video-container { position: absolute; inset: 0; width: 100%; height: 100%; }  
+    video { width: 100%; height: 100%; background: #000; object-fit: contain; }  
+    .shaka-spinner-container, .shaka-spinner, .shaka-spinner-svg { display: none !important; }  
+  </style>  
+</head>  
+<body>  
+  <div class="shaka-video-container" data-shaka-player>  
+    <video autoplay muted playsinline preload="metadata" poster="https://i.ibb.co/nMBMq5qL/20260602-220931.jpg"></video>  
+  </div>  
+  
+  <script>  
+    document.addEventListener('DOMContentLoaded', async () => {  
+      const video = document.querySelector('video');  
+      const player = new shaka.Player(video);  
+      
+      // ✅ CORS aur Header Security Fix
+      player.getNetworkingEngine().registerRequestFilter((type, request) => {
+        request.allowCrossSiteCredentials = true;
+        request.headers['Origin'] = 'https://www.amazon.com'; 
+      });
 
-    <div class="player-wrapper">
-        <video id="player" autoplay controls playsinline crossorigin></video>
-    </div>
-
-    <script>
-        // Stream URL प्राप्त करने का फंक्शन
-        function getParam(name){
-            const url = new URL(window.location.href);
-            return url.searchParams.get(name);
-        }
-
-        var stream = getParam("embed");
-        const video = document.getElementById("player");
-
-        if (Hls.isSupported()) {
-            const hls = new Hls({maxMaxBufferLength:100});
-            hls.loadSource(stream);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function(){
-                const levels = hls.levels.map(l => l.height);
-                // प्लेयर चालू करना
-                new Plyr(video, {
-                    quality: {
-                        default: levels[0],
-                        options: levels,
-                        forced: true,
-                        onChange: (q) => {
-                            hls.levels.forEach((level, i) => {
-                                if(level.height === q){ hls.currentLevel = i; }
-                            });
-                        }
-                    }
-                });
-            });
-        } else {
-            video.src = stream;
-            new Plyr(video);
-        }
-    </script>
-</body>
+      const container = document.querySelector('.shaka-video-container');  
+      const ui = new shaka.ui.Overlay(player, container, video);  
+  
+      ui.configure({  
+        controlPanelElements: ['play_pause', 'time_and_duration', 'mute', 'volume', 'spacer', 'language', 'captions', 'picture_in_picture', 'quality', 'fullscreen'],  
+        volumeBarColors: { base: 'rgba(255, 192, 203, 0.3)', level: 'rgb(255, 105, 180)' },  
+        seekBarColors: { base: 'rgba(255, 255, 0, 0.3)', buffered: 'rgba(255, 255, 0, 0.6)', played: 'rgb(255, 255, 0)' }  
+      });  
+  
+      player.configure({  
+        drm: {  
+          clearKeys: { "632b06f50e561ccfc3473ae057177d70": "1fd0877cfa85e2617ab00f14b4fb66fe" }  
+        },  
+        streaming: { lowLatencyMode: true, bufferingGoal: 10, rebufferingGoal: 2 }  
+      });  
+  
+      try {  
+        await player.load("https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/tcgcz1g3fk/out/v1/33a4bce588914c258fd9300022b50846/cenc.mpd");  
+        console.log("Stream loaded successfully");  
+      } catch (error) {  
+        console.error('Load error:', error);  
+      }  
+    });  
+  </script>  
+</body>  
 </html>
